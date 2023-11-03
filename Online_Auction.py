@@ -39,5 +39,30 @@ def login():
 
     return render_template('login.htm') 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Get user registration data from the form
+        usr_name = request.form['usr_name']
+        email = request.form['email']
+        DOB = request.form['DOB']
+        phno = request.form['phno']
+        house_no = request.form['house_no']
+        street = request.form['street']
+        city = request.form['city']
+        pin_code = request.form['pin_code']
+        pwd = request.form['pwd']
+
+        try:
+            db_cursor.execute("{CALL SP_registerUser(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}",
+                             (usr_name, email, DOB, phno, house_no, street, city, pin_code, pwd, 1003))
+            db_connection.commit()
+
+            return redirect(url_for('login'))
+        except pyodbc.Error as e:
+            print(f"Error calling the stored procedure: {e}")
+
+    return render_template('register.htm')
+
 if __name__ == '__main__':
     app.run()
