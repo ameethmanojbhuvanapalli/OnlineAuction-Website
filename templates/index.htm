@@ -14,7 +14,7 @@
         </thead>
         <tbody>
             {% set ns=namespace(current_status = 0) %}
-            {% for row in value %}
+            {% for row in auctionData %}
                 {% if ns.current_status != row['Auction_status'] %}
                     <tr><td colspan="4"><b>{{ row['StatusDef_text'] }}</b></td></tr>
                     {% set ns.current_status = row['Auction_status'] %}
@@ -25,6 +25,9 @@
                     <td>{{ row['endDate'] }}</td>
                     <td>{{ row['Item_img_path'] }}</td>
                 </tr>
+            {% endfor %}
+            {% for row in functions %}
+                <tr><td colspan="4">{{ row['Function_name'] }}</td></tr>
             {% endfor %}
         </tbody>
     </table>

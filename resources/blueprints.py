@@ -12,11 +12,9 @@ def login():
     
     db_cursor = current_app.config['DB_CURSOR']
     if request.method == 'POST':
-        # Get email or phone number and password from the form
         loginID = request.form['email']
         password = request.form['password']
 
-        # Call the stored procedure to check the user's credentials
         try:
             db_cursor.execute("{CALL SP_userLogin(?, ?)}", (loginID, password))
             result = db_cursor.fetchone()
@@ -24,6 +22,7 @@ def login():
             if result:
                 user_id, user_name, role_id, role_name = result
                 session['uid']=user_id
+                session['role_id']=role_id
                 return redirect(url_for('home'))
             else:
                 flash('Login failed. Please try again.', 'error')
@@ -68,14 +67,13 @@ logout_bp = Blueprint('logout', __name__)
 
 @logout_bp.route('/logout')
 def logout():
-    # Clear the session data to log the user out
     session.clear()
-    return redirect(url_for('home'))  # Redirect to the home page or any other page after logout
+    return redirect(url_for('home'))
 
 auctionDetails_bp=Blueprint('auctionDetails',__name__)
 
 @auctionDetails_bp.route('/auctionDetails/<int:aid>')
 def auctionDetails(aid):
     #aid = request.args.get('aid')
-
+    
     return render_template('auctionDetails.htm',aid=aid)

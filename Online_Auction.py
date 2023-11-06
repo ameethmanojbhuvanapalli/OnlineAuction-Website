@@ -14,18 +14,21 @@ try:
 except pyodbc.Error as e:
     print(f"Error connecting to the database: {e}")
 
-@app.route('/')
-def home():
-    auctionData = F.getHomePageAuctions(app.config['DB_CURSOR'],3)
-    return render_template("index.htm",value=auctionData) 
-
 @app.before_request
 def check_session():
+    global role_id
     if 'uid' in session:
         user_id = session['uid']
-        print(user_id)
+        role_id = session.get('role_id',None)
     else:
+        role_id=None
         print('not logged in')
+        
+@app.route('/')
+def home():
+    return render_template("index.htm",
+        auctionData=F.getHomePageAuctions(app.config['DB_CURSOR'],3),
+        functions=F.getRoleFunctions(app.config['DB_CURSOR'],role_id)) 
 
 
 
