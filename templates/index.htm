@@ -1,2 +1,31 @@
-<!DOCTYPE html>
-<h1>Welcome to Online Bids</h1>
+{% extends "base.htm" %}
+
+{% block content %}
+    <h2>Welcome to My Website</h2>
+    <p>This is the home page content.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Auction Text</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Item Image Path</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set ns=namespace(current_status = 0) %}
+            {% for row in value %}
+                {% if ns.current_status != row['Auction_status'] %}
+                    <tr><td colspan="4"><b>{{ row['StatusDef_text'] }}</b></td></tr>
+                    {% set ns.current_status = row['Auction_status'] %}
+                {% endif %}
+                <tr>
+                    <td><a href="/auctionDetails/{{ row['Auction_id'] }}">{{ row['Auction_text'] }}</a></td>
+                    <td>{{ row['startDate'] }}</td>
+                    <td>{{ row['endDate'] }}</td>
+                    <td>{{ row['Item_img_path'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

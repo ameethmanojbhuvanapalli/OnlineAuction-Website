@@ -1,12 +1,13 @@
-from flask import Blueprint, render_template, request, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, current_app,session
 import pyodbc
+
 
 login_bp = Blueprint('login', __name__)
 
 @login_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    
     db_cursor = current_app.config['DB_CURSOR']
-
     if request.method == 'POST':
         # Get email or phone number and password from the form
         loginID = request.form['email']
@@ -19,7 +20,8 @@ def login():
 
             if result:
                 user_id, user_name, role_id, role_name = result
-                return f'Login successful! User ID: {user_id}, User Name: {user_name}, Role: {role_name}'
+                session['uid']=user_id
+                return f'Login successful! User ID: {user_id}, User Name: {user_name}, Role: {role_name}, Session:{session['uid']}'
             else:
                 return 'Login failed. Please try again.'
         except pyodbc.Error as e:
@@ -31,8 +33,8 @@ register_bp = Blueprint('register', __name__)
 
 @register_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    db_cursor = current_app.config['DB_CURSOR']
 
+    db_cursor = current_app.config['DB_CURSOR']
     if request.method == 'POST':
         # Get user registration data from the form
         usr_name = request.form['usr_name']
@@ -55,3 +57,20 @@ def register():
             print(f"Error calling the stored procedure: {e}")
 
     return render_template('register.htm')
+
+
+auctionDetails_bp=Blueprint('auctionDetails',__name__)
+
+@auctionDetails_bp.route('/auctionDetails/<int:aid>')
+def auctionDetails(aid):
+    #aid = request.args.get('aid')
+
+    return render_template('auctionDetails.htm',aid=aid)
+
+
+
+def getHomePageAuctions(count):
+    db_cursor = current_app.config['DB_CURSOR']
+    db_cursor.execute("{CALL SP_getTopAuctions(?)}",(count))
+    return db_cursor.fetchall() #data from database
+    

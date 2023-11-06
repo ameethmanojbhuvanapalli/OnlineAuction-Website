@@ -1,8 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session
 import pyodbc
 from blueprints import Functions as F
 
 app = Flask(__name__)
+app.secret_key = 'Ameeth'
 
 # Define your database connection parameters
 try:
@@ -15,10 +16,13 @@ except pyodbc.Error as e:
 
 @app.route('/')
 def home():
-    return render_template('index.htm')
+    auctionData = F.getHomePageAuctions(3)
+    return render_template("index.htm",value=auctionData) 
+
 
 app.register_blueprint(F.login_bp)
 app.register_blueprint(F.register_bp)
+app.register_blueprint(F.auctionDetails_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
