@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, current_app,session
+from flask import Blueprint, render_template, request, redirect, url_for, current_app,session,flash
 import pyodbc
 
 
@@ -6,6 +6,9 @@ login_bp = Blueprint('login', __name__)
 
 @login_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    
+    if 'uid' in session:
+        return redirect(url_for('home'))
     
     db_cursor = current_app.config['DB_CURSOR']
     if request.method == 'POST':
@@ -21,9 +24,9 @@ def login():
             if result:
                 user_id, user_name, role_id, role_name = result
                 session['uid']=user_id
-                return f'Login successful! User ID: {user_id}, User Name: {user_name}, Role: {role_name}, Session:{session['uid']}'
+                return redirect(url_for('home'))
             else:
-                return 'Login failed. Please try again.'
+                flash('Login failed. Please try again.', 'error')
         except pyodbc.Error as e:
             print(f"Error calling the stored procedure: {e}")
 
@@ -34,6 +37,9 @@ register_bp = Blueprint('register', __name__)
 @register_bp.route('/register', methods=['GET', 'POST'])
 def register():
 
+    if 'uid' in session:
+        return redirect(url_for('home'))
+    
     db_cursor = current_app.config['DB_CURSOR']
     if request.method == 'POST':
         # Get user registration data from the form
@@ -58,6 +64,13 @@ def register():
 
     return render_template('register.htm')
 
+logout_bp = Blueprint('logout', __name__)
+
+@logout_bp.route('/logout')
+def logout():
+    # Clear the session data to log the user out
+    session.clear()
+    return redirect(url_for('home'))  # Redirect to the home page or any other page after logout
 
 auctionDetails_bp=Blueprint('auctionDetails',__name__)
 
@@ -66,11 +79,3 @@ def auctionDetails(aid):
     #aid = request.args.get('aid')
 
     return render_template('auctionDetails.htm',aid=aid)
-
-
-
-def getHomePageAuctions(count):
-    db_cursor = current_app.config['DB_CURSOR']
-    db_cursor.execute("{CALL SP_getTopAuctions(?)}",(count))
-    return db_cursor.fetchall() #data from database
-    

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, session
 import pyodbc
-from blueprints import Functions as F
+from resources import functions as F,blueprints as B
 
 app = Flask(__name__)
 app.secret_key = 'Ameeth'
@@ -16,13 +16,23 @@ except pyodbc.Error as e:
 
 @app.route('/')
 def home():
-    auctionData = F.getHomePageAuctions(3)
+    auctionData = F.getHomePageAuctions(app.config['DB_CURSOR'],3)
     return render_template("index.htm",value=auctionData) 
 
+@app.before_request
+def check_session():
+    if 'uid' in session:
+        user_id = session['uid']
+        print(user_id)
+    else:
+        print('not logged in')
 
-app.register_blueprint(F.login_bp)
-app.register_blueprint(F.register_bp)
-app.register_blueprint(F.auctionDetails_bp)
+
+
+app.register_blueprint(B.login_bp)
+app.register_blueprint(B.logout_bp)
+app.register_blueprint(B.register_bp)
+app.register_blueprint(B.auctionDetails_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
