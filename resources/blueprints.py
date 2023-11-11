@@ -1,14 +1,16 @@
-from flask import Blueprint, render_template, request, redirect, url_for, current_app,session,flash
+from flask import Blueprint,render_template, request, redirect, url_for, current_app,session,flash
 import pyodbc
+from resources import functions as F
 
 
 login_bp = Blueprint('login', __name__)
 
 @login_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    
-    if 'uid' in session:
-        return redirect(url_for('home'))
+    if request.referrer != 'http://localhost:8080/login':
+        session['url']=request.referrer
+        if session['url'] == None:
+            session['url'] = url_for('home')
     
     db_cursor = current_app.config['DB_CURSOR']
     if request.method == 'POST':
@@ -22,8 +24,9 @@ def login():
             if result:
                 user_id, user_name, role_id, role_name = result
                 session['uid']=user_id
+                session['uname']=user_name
                 session['role_id']=role_id
-                return redirect(url_for('home'))
+                return redirect(session['url'])
             else:
                 flash('Login failed. Please try again.', 'error')
         except pyodbc.Error as e:
@@ -74,6 +77,19 @@ auctionDetails_bp=Blueprint('auctionDetails',__name__)
 
 @auctionDetails_bp.route('/auctionDetails/<int:aid>')
 def auctionDetails(aid):
-    #aid = request.args.get('aid')
+    db_cursor = current_app.config['DB_CURSOR']
+    db_cursor.execute("{CALL SP_auctionDetailswithID(?)}",(aid))
+    details = db_cursor.fetchone()
+    return render_template('auctionDetails.htm',details=details)
+
+myAuctions_bp=Blueprint('myAuctions',__name__)
+
+@myAuctions_bp.route('/myAuctions')
+def myAuctions():
+    db_cursor = current_app.config['DB_CURSOR']
     
-    return render_template('auctionDetails.htm',aid=aid)
+    user_id = session.get('uid', None)
+
+    db_cursor.execute("{CALL SP_getUserAuctions(?)}", (user_id))
+    myAuctions = db_cursor.fetchall()
+    return render_template('myAuctions.htm', myAuctions=myAuctions)

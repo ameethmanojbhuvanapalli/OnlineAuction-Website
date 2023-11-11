@@ -2,7 +2,7 @@ from flask import Flask, render_template, session
 import pyodbc
 from resources import functions as F,blueprints as B
 
-app = Flask(__name__)
+app = Flask(__name__,static_folder='static')
 app.secret_key = 'Ameeth'
 
 # Define your database connection parameters
@@ -16,19 +16,24 @@ except pyodbc.Error as e:
 
 @app.before_request
 def check_session():
-    global role_id
+    global role_id,user_name,user_id
     if 'uid' in session:
-        user_id = session['uid']
+        user_id = session.get('uid',None)
+        user_name=session.get('uname',None)
         role_id = session.get('role_id',None)
     else:
+        user_id=None
+        user_name=None
         role_id=None
-        print('not logged in')
         
 @app.route('/')
 def home():
-    return render_template("index.htm",
+    return render_template(
+        "index.htm",
+        uname=user_name,
         auctionData=F.getHomePageAuctions(app.config['DB_CURSOR'],3),
-        functions=F.getRoleFunctions(app.config['DB_CURSOR'],role_id)) 
+        functions=F.getRoleFunctions(app.config['DB_CURSOR'],role_id)
+        ) 
 
 
 
@@ -36,6 +41,7 @@ app.register_blueprint(B.login_bp)
 app.register_blueprint(B.logout_bp)
 app.register_blueprint(B.register_bp)
 app.register_blueprint(B.auctionDetails_bp)
+app.register_blueprint(B.myAuctions_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)

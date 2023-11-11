@@ -1,5 +1,96 @@
 {% extends "base.htm" %}
 
 {% block content %}
-    <p>{{ aid }}</p>
+<div>
+    <table style="width:100%;">
+        <tr>
+            <td>Aution Name</td>
+            <td>:</td>
+            <td>{{ details['Auction_text'] }}</td>
+        </tr>
+        <tr>
+            <td>Start Date</td>
+            <td>:</td>
+            <td>{{ details['startDate'] }}</td>
+        </tr>
+        <tr>
+            <td>End Date</td>
+            <td>:</td>
+            <td>{{ details['endDate'] }}</td>
+        </tr>
+        <tr>
+            <td>Base Price</td>
+            <td>:</td>
+            <td>{{details['basePrice']}}</td>
+        </tr>
+        <tr>
+            <td>Reserve Price</td>
+            <td>:</td>
+            <td>{{details['reservePrice']}}</td>
+        </tr>
+        <tr>
+            <td>Increment</td>
+            <td>:</td>
+            <td>{{details['bidInc']}}</td>
+        </tr>
+        <tr>
+            <td>Last Bid Price</td>
+            <td>:</td>
+            <td>{{details['max_bid']}}</td>
+        </tr>
+        <tr>
+            <td>Last Bid Time</td>
+            <td>:</td>
+            <td>{{details['last_bid_time']}}</td>
+        </tr>
+        <tr>
+            <td>Expected Bid</td>
+            <td>:</td>
+            <td>{{details['expectedBidamt']}}</td>
+        </tr>
+        <tr>
+            <td>Bid Count</td>
+            <td>:</td>
+            <td>{{details['Bid_count']}}</td>
+        </tr>
+        <tr>
+            <td>Seller ID</td>
+            <td>:</td>
+            <td>{{details['seller_id']}}</td>
+        </tr>
+        <tr>
+            <td>Seller Name</td>
+            <td>:</td>
+            <td>{{details['user_name']}}</td>
+        </tr>
+    </table>
+    <table style="width:100%;">
+        <tr>
+            <td>Item</td>
+            <td>:</td>
+            <td>{{details['Item_Name']}}</td>
+        </tr>
+        <tr>
+            <td>Item Description</td>
+            <td>:</td>
+            <td>{{details['Item_desc']}}</td>
+        </tr>
+        <tr>
+            <td>Image</td>
+            <td>:</td>
+            <td><img src="{{ url_for('static', filename=details['Item_img_path']) }}" width="200" height="200"></td>
+        </tr>
+        <tr>
+            <td>Maximum Retail Price</td>
+            <td>:</td>
+            <td>{{details['MRP']}}</td>
+        </tr>
+        <tr>
+            <td>Category</td>
+            <td>:</td>
+            <td>{{details['category_name']}}</td>
+        </tr>
+    </table>
+</div>
+
 {% endblock %}

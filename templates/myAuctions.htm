@@ -1,16 +1,13 @@
 {% extends "base.htm" %}
+{% block title %}My Auctions{% endblock %}
 
 {% block content %}
-    <h2>Welcome to My Website</h2>
-    <p>This is the home page content.</p>
-    {% if uname!=None %}
-        <p>Welcome, {{ uname }}!</p>
-    {% else %}
-        <p>Welcome, Guest!</p>
-    {% endif %}
-    <a href="/myAuctions">
-        <button>My Auctions</button>
-     </a>
+{% if 'uid' not in session %}
+    <p>Login to see your auctions</p>
+    <a href="/login">
+        <button>Login</button>
+    </a>
+{% else %}
     <table>
         <thead>
             <tr>
@@ -22,7 +19,7 @@
         </thead>
         <tbody>
             {% set ns=namespace(current_status = 0) %}
-            {% for row in auctionData %}
+            {% for row in myAuctions %}
                 {% if ns.current_status != row['Auction_status'] %}
                     <tr><td colspan="4"><b>{{ row['StatusDef_text'] }}</b></td></tr>
                     {% set ns.current_status = row['Auction_status'] %}
@@ -39,4 +36,5 @@
             {% endfor %}
         </tbody>
     </table>
+{% endif %}
 {% endblock %}
