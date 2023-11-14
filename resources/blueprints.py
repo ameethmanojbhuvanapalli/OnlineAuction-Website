@@ -1,6 +1,7 @@
 from urllib.parse import urljoin
 from flask import Blueprint,render_template, request, redirect, url_for, current_app,session,flash
 import pyodbc
+from datetime import datetime
 from resources import functions as F
 
 
@@ -9,9 +10,7 @@ login_bp = Blueprint('login', __name__)
 @login_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.referrer != urljoin(request.url_root, url_for('login.login')):
-        session['url']=request.referrer
-        if session['url'] == None:
-            session['url'] = url_for('home')
+        F.referral()
     
     db_cursor = current_app.config['DB_CURSOR']
     if request.method == 'POST':
@@ -103,3 +102,46 @@ def myAuctions():
     myAuctions = db_cursor.fetchall()
     return render_template('myAuctions.htm', myAuctions=myAuctions)
 
+addAuction_bp = Blueprint('addAuction', __name__)
+
+@addAuction_bp.route('/addAuction', methods=['GET', 'POST'])
+def addAuction():
+    db_cursor = current_app.config['DB_CURSOR']
+
+    # Get category details
+    categories = F.categoryDetails(db_cursor, 0)
+
+    # Get item statuses
+    item_statuses = F.getStatusDefinitionswithGrp(db_cursor,'Item')
+
+    if request.method == 'POST':
+        # Retrieve form data
+        item_name = request.form['Item_Name']
+        item_img_path = request.form['Item_img_path']
+        mrp = float(request.form['MRP'])
+        seller_id = session['uid']
+        item_desc = request.form['Item_desc']
+        category_id = int(request.form['category_id'])
+        item_status_id = int(request.form['Item_status'])
+        auction_text = request.form['Auction_text']
+        base_price = float(request.form['basePrice'])
+        reserve_price = float(request.form['reservePrice'])
+        bid_inc = float(request.form['bidInc'])
+        start_date = datetime.strptime(request.form['startDate'], '%Y-%m-%dT%H:%M')
+        end_date = datetime.strptime(request.form['endDate'], '%Y-%m-%dT%H:%M')
+
+        try:
+            '''
+            # Execute the stored procedure
+            db_cursor.execute("{CALL SP_insertAuctionItems (?,?,?,?,?,?,?,?,?,?,?,?,?)}",
+                             item_name, item_img_path, mrp, seller_id, item_desc, category_id, item_status_id,
+                             auction_text, base_price, reserve_price, bid_inc, start_date, end_date)
+            
+            db_cursor.commit()
+            '''
+            return redirect(url_for('myAuctions.myAuctions'))
+        except Exception as e:
+            db_cursor.rollback()
+            return f'Error creating auction: {str(e)}'
+
+    return render_template('addAuction.htm', categories=categories, item_statuses=item_statuses)

@@ -1,0 +1,89 @@
+{% extends 'base.htm' %}
+
+{% block title %}Add Auction{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Create Auction</h2>
+    <form action="/addAuction" method="post" onsubmit="return validateDates()">
+        <table class="table">
+            <!-- Item Details -->
+            <tr>
+                <th colspan="2"><h3>Item Details</h3></th>
+            </tr>
+            <tr>
+                <td><label for="Item_Name" class="form-label">Item Name:</label></td>
+                <td><input type="text" name="Item_Name" class="form-control" required></td>
+            </tr>
+            <tr>
+                <td><label for="Item_img_path" class="form-label">Item Image Path:</label></td>
+                <td><input type="text" name="Item_img_path" class="form-control" required></td>
+            </tr>
+            <tr>
+                <td><label for="MRP" class="form-label">MRP:</label></td>
+                <td><input type="number" name="MRP" step="0.01" class="form-control" required></td>
+            </tr>
+            <tr>
+                <td><label for="category_id" class="form-label">Category:</label></td>
+                <td>
+                    <select name="category_id" class="form-control" required>
+                        <option value="" disabled selected>--Select Category--</option>
+                        {% for category in categories %}
+                            <option value="{{ category.category_id }}">{{ category.category_name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="Item_status" class="form-label">Item Status:</label></td>
+                <td>
+                    <select name="Item_status" class="form-control" required>
+                        {% for status in item_statuses %}
+                            <option value="{{ status.StatusDef_id }}">{{ status.StatusDef_text }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="Item_desc" class="form-label">Item Description:</label></td>
+                <td><textarea name="Item_desc" rows="4" class="form-control" required></textarea></td>
+            </tr>
+            <!-- ... (other item details fields) ... -->
+
+            <!-- Auction Details -->
+            <tr>
+                <th colspan="2"><h3 class="mt-4">Auction Details</h3></th>
+            </tr>
+            <tr>
+                <td><label for="Auction_text" class="form-label">Auction Text:</label></td>
+                <td><input type="text" name="Auction_text" class="form-control" required></td>
+            </tr>
+            <tr>
+                <td><label for="basePrice" class="form-label">Base Price:</label></td>
+                <td><input type="number" name="basePrice" step="0.01" class="form-control" required></td>
+            </tr>
+            <tr>
+                <td><label for="reservePrice" class="form-label">Reserve Price:</label></td>
+                <td><input type="number" name="reservePrice" step="0.01" class="form-control" required></td>
+            </tr>
+            <tr>
+                <td><label for="bidInc" class="form-label">Bid Increment:</label></td>
+                <td><input type="number" name="bidInc" step="0.01" class="form-control" required></td>
+            </tr>
+
+            <!-- Auction Dates -->
+            <tr>
+                <td><label for="startDate" class="form-label">Start Date:</label></td>
+                <td><input type="datetime-local" name="startDate" class="form-control" required></td>
+            </tr>
+            <tr>
+                <td><label for="endDate" class="form-label">End Date:</label></td>
+                <td><input type="datetime-local" name="endDate" class="form-control" required></td>
+            </tr>
+        </table>
+
+        <!-- Submit Button -->
+        <input type="submit" value="Create Auction" class="btn btn-primary">
+    </form>
+</div>
+{% endblock %}
