@@ -1,4 +1,4 @@
-from flask import request, g,session
+from flask import request,session
 
 def getHomePageAuctions(db_cursor,count):
     db_cursor.execute("{CALL SP_getTopAuctions(?)}",(count))

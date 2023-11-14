@@ -1,3 +1,4 @@
+from urllib.parse import urljoin
 from flask import Blueprint,render_template, request, redirect, url_for, current_app,session,flash
 import pyodbc
 from resources import functions as F
@@ -7,7 +8,7 @@ login_bp = Blueprint('login', __name__)
 
 @login_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.referrer != 'http://localhost:8080/login':
+    if request.referrer != urljoin(request.url_root, url_for('login.login')):
         session['url']=request.referrer
         if session['url'] == None:
             session['url'] = url_for('home')
@@ -80,16 +81,25 @@ def auctionDetails(aid):
     db_cursor = current_app.config['DB_CURSOR']
     db_cursor.execute("{CALL SP_auctionDetailswithID(?)}",(aid))
     details = db_cursor.fetchone()
-    return render_template('auctionDetails.htm',details=details)
+    db_cursor.execute("{CALL SP_bidHistorywithAuctionID(?)}",(aid))
+    bidHistory = db_cursor.fetchall()
+    return render_template('auctionDetails.htm',details=details,bidHistory=bidHistory)
+
+@auctionDetails_bp.route('/addBid/<int:aid>',methods=['GET', 'POST'])
+def addBid(aid):
+    db_cursor = current_app.config['DB_CURSOR']
+    bidamt = float(request.form['bid'])
+    db_cursor.execute("{CALL SP_addBid(?,?,?)}",(session['uid'],aid,bidamt))
+    db_cursor.commit()
+    return redirect(url_for('auctionDetails.auctionDetails', aid=aid))
 
 myAuctions_bp=Blueprint('myAuctions',__name__)
 
 @myAuctions_bp.route('/myAuctions')
 def myAuctions():
     db_cursor = current_app.config['DB_CURSOR']
-    
     user_id = session.get('uid', None)
-
     db_cursor.execute("{CALL SP_getUserAuctions(?)}", (user_id))
     myAuctions = db_cursor.fetchall()
     return render_template('myAuctions.htm', myAuctions=myAuctions)
+
