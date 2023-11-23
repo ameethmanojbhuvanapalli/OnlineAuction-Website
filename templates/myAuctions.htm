@@ -8,33 +8,20 @@
         <button>Login</button>
     </a>
 {% else %}
-    <table>
-        <thead>
-            <tr>
-                <th>Auction Text</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Item Image Path</th>
-            </tr>
-        </thead>
-        <tbody>
             {% set ns=namespace(current_status = 0) %}
             {% for row in myAuctions %}
                 {% if ns.current_status != row['Auction_status'] %}
-                    <tr><td colspan="4"><b>{{ row['StatusDef_text'] }}</b></td></tr>
+                    <div class="status-header"><b>{{ row['StatusDef_text'] }}</b></div>
                     {% set ns.current_status = row['Auction_status'] %}
                 {% endif %}
-                <tr>
-                    <td><a href="/auctionDetails/{{ row['Auction_id'] }}">{{ row['Auction_text'] }}</a></td>
-                    <td>{{ row['startDate'] }}</td>
-                    <td>{{ row['endDate'] }}</td>
-                    <td><img src="{{ url_for('static', filename=row['Item_img_path']) }}" width="200" height="200"></td>
-                </tr>
+                <div class="product-item">
+                    <img src="{{ url_for('static', filename=row['Item_img_path']) }}" alt="Item Image">
+                    <div class="product-details">
+                        <h3><a href="/auctionDetails/{{ row['Auction_id'] }}">{{ row['Auction_text'] }}</a></h3>
+                        <p><strong>Start Date:</strong> {{ row['startDate'] }}</p>
+                        <p><strong>End Date:</strong> {{ row['endDate'] }}</p>
+                    </div>
+                </div>
             {% endfor %}
-            {% for row in functions %}
-                <tr><td colspan="4">{{ row['Function_name'] }}</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
 {% endif %}
 {% endblock %}

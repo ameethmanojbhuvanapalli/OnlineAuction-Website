@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Online Auction{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='s1.css') }}">
+    <!-- Include any additional CSS files here -->
 </head>
 <body>
     <header>
@@ -9,7 +13,11 @@
     </header>
     
     <nav>
-        <!-- Add your navigation links here -->
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/myAuctions">My Auctions</a></li>
+            <!-- Add more navigation links as needed -->
+        </ul>
     </nav>
     
     <div class="content">
@@ -17,7 +25,7 @@
     </div>
     
     <footer>
-        <p>&copy; This is footer</p>
+        <p>&copy; This is the footer</p>
     </footer>
 </body>
 </html>

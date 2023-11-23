@@ -11,6 +11,8 @@ login_bp = Blueprint('login', __name__)
 def login():
     if request.referrer != urljoin(request.url_root, url_for('login.login')):
         F.referral()
+    if 'uid' in session:
+        return redirect(session['url'])
     
     db_cursor = current_app.config['DB_CURSOR']
     if request.method == 'POST':
@@ -131,14 +133,14 @@ def addAuction():
         end_date = datetime.strptime(request.form['endDate'], '%Y-%m-%dT%H:%M')
 
         try:
-            '''
+            
             # Execute the stored procedure
             db_cursor.execute("{CALL SP_insertAuctionItems (?,?,?,?,?,?,?,?,?,?,?,?,?)}",
                              item_name, item_img_path, mrp, seller_id, item_desc, category_id, item_status_id,
                              auction_text, base_price, reserve_price, bid_inc, start_date, end_date)
             
             db_cursor.commit()
-            '''
+            
             return redirect(url_for('myAuctions.myAuctions'))
         except Exception as e:
             db_cursor.rollback()

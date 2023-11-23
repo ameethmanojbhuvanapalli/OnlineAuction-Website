@@ -1,39 +1,49 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register</title>
-</head>
-<body>
-    <h1>Register</h1>
-    <form method="POST" action="/register">
-        <label for="usr_name">Username:</label>
-        <input type="text" name="usr_name" required><br><br>
-        
-        <label for="email">Email:</label>
-        <input type="email" name="email" required><br><br>
-        
-        <label for="DOB">Date of Birth:</label>
-        <input type="date" name="DOB" required><br><br>
-        
-        <label for="phno">Phone Number:</label>
-        <input type="text" name="phno" required><br><br>
-        
-        <label for="house_no">House Number:</label>
-        <input type="text" name="house_no" required><br><br>
-        
-        <label for="street">Street:</label>
-        <input type="text" name="street" required><br><br>
-        
-        <label for="city">City:</label>
-        <input type="text" name="city" required><br><br>
-        
-        <label for="pin_code">Pin Code:</label>
-        <input type="number" name="pin_code" required><br><br>
-        
-        <label for="pwd">Password:</label>
-        <input type="password" name="pwd" required><br><br>
-        
-        <input type="submit" value="Register">
-    </form>
-</body>
-</html>
+{% extends 'login-register.htm' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Join Us Today</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert">
+                    {% for category, message in messages %}
+                        {% if category == 'error' %}
+                            <p>{{ message }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/register">
+
+            <input type="text" name="usr_name" placeholder="Name" required>
+
+            <input type="email" name="email" placeholder="E-mail address" required>
+
+            <input type="date" name="DOB" required>
+
+            <input type="text" name="phno" placeholder="Phone Number" required>
+
+            <input type="text" name="house_no" placeholder="House Number" required>
+
+            <input type="text" name="street" placeholder="Street" required>
+
+            <input type="text" name="city" placeholder="City" required>
+
+            <input type="number" name="pin_code" placeholder="Pin Code" required>
+
+            <input type="password" name="pwd" placeholder="Password" required>
+
+            <input type="submit" value="Register">
+        </form>
+
+
+        <div class="link">
+            <p>Already have an account? <a href="/login">Login here</a></p>
+        </div>
+    </div>
+{% endblock %}
