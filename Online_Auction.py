@@ -1,6 +1,6 @@
 from flask import Flask, render_template, session
 import pyodbc
-from resources import functions as F,blueprints as B
+from resources import functions as F,blueprints as B,x
 
 app = Flask(__name__,static_folder='static')
 app.secret_key = 'Ameeth'
@@ -44,6 +44,9 @@ app.register_blueprint(B.auctionDetails_bp)
 app.register_blueprint(B.myAuctions_bp)
 app.register_blueprint(B.addAuction_bp)
 app.register_blueprint(B.myBids_bp)
+
+
+app.register_blueprint(x.upload_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
