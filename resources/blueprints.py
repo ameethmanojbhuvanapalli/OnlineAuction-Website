@@ -1,8 +1,10 @@
+import os
 from urllib.parse import urljoin
 from flask import Blueprint, jsonify,render_template, request, redirect, url_for, current_app,session,flash
 import pyodbc
 from datetime import datetime
 from resources import functions as F
+from werkzeug.utils import secure_filename
 
 
 login_bp = Blueprint('login', __name__)
@@ -137,7 +139,7 @@ def addAuction():
     if request.method == 'POST':
         # Retrieve form data
         item_name = request.form['Item_Name']
-        item_img_path = request.form['Item_img_path']
+        image = request.files['Item_img']
         mrp = float(request.form['MRP'])
         seller_id = session['uid']
         item_desc = request.form['Item_desc']
@@ -150,12 +152,18 @@ def addAuction():
         start_date = datetime.strptime(request.form['startDate'], '%Y-%m-%dT%H:%M')
         end_date = datetime.strptime(request.form['endDate'], '%Y-%m-%dT%H:%M')
 
+        if image:
+            # Generate a unique filename based on the original filename
+            filename_without_static = os.path.join('imgs/', secure_filename(image.filename))
+            full_filename = os.path.join('static/', filename_without_static)
+            image.save(full_filename)
+        
         try:
             
             # Execute the stored procedure
             
             db_cursor.execute("{CALL SP_insertAuctionItems (?,?,?,?,?,?,?,?,?,?,?,?,?)}",
-                             item_name, item_img_path, mrp, seller_id, item_desc, category_id, item_status_id,
+                             item_name, filename_without_static, mrp, seller_id, item_desc, category_id, item_status_id,
                              auction_text, base_price, reserve_price, bid_inc, start_date, end_date)
             
             db_cursor.commit()

@@ -26,7 +26,7 @@
 
 <div class="container">
     <h2>Create Auction</h2>
-    <form action="/addAuction" method="post">
+    <form action="/addAuction" method="post" enctype="multipart/form-data">
         <table class="table">
             <!-- Item Details -->
             <tr>
@@ -37,8 +37,8 @@
                 <td><input type="text" name="Item_Name" class="form-control" required></td>
             </tr>
             <tr>
-                <td><label for="Item_img_path" class="form-label">Item Image Path:</label></td>
-                <td><input type="text" name="Item_img_path" class="form-control" required></td>
+                <td><label for="Item_img">Item Image:</label></td>
+                <td><input type="file" name="Item_img" accept="image/*" required></td>
             </tr>
             <tr>
                 <td><label for="MRP" class="form-label">MRP:</label></td>
