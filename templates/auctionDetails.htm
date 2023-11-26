@@ -34,26 +34,6 @@
             <td>{{details['bidInc']}}</td>
         </tr>
         <tr>
-            <td>Last Bid Price</td>
-            <td>:</td>
-            <td>{{details['max_bid']}}</td>
-        </tr>
-        <tr>
-            <td>Last Bid Time</td>
-            <td>:</td>
-            <td>{{details['last_bid_time']}}</td>
-        </tr>
-        <tr>
-            <td>Expected Bid</td>
-            <td>:</td>
-            <td>{{details['expectedBidamt']}}</td>
-        </tr>
-        <tr>
-            <td>Bid Count</td>
-            <td>:</td>
-            <td>{{details['Bid_count']}}</td>
-        </tr>
-        <tr>
             <td>Seller ID</td>
             <td>:</td>
             <td>{{details['seller_id']}}</td>
@@ -92,6 +72,32 @@
         </tr>
     </table>
 </div>
+
+<div>
+    <table id="latestBidDetails">
+        <tr>
+            <td>Last Bid Price</td>
+            <td>:</td>
+            <td id="maxBid"></td>
+        </tr>
+        <tr>
+            <td>Last Bid Time</td>
+            <td>:</td>
+            <td id="maxBidTime"></td>
+        </tr>
+        <tr>
+            <td>Expected Bid</td>
+            <td>:</td>
+            <td id="expectedBidamt"></td>
+        </tr>
+        <tr>
+            <td>Bid Count</td>
+            <td>:</td>
+            <td id="bidCount"></td>
+        </tr>
+    </table>
+</div>
+
 <div>
     {% if 'uid' not in session %}
         <p>Login to add your bids</p>
@@ -99,45 +105,106 @@
             <button>Login</button>
         </a>
     {% else %}
-        <form method="post" action="/addBid/{{ details['Auction_id'] }}">
+        <form method="post" action="/addBid/{{ details['Auction_id'] }}" id="bidForm">
             <label for="bid">Bid:</label>
-            <input type="number" id="bid" name="bid" value="{{ details['expectedBidamt'] }}" min="{{ details['expectedBidamt'] }}" 
-                 required><br>
-                 {% set isUserNotSeller = (bidHistory|length == 0 or bidHistory[0]['User_id'] != session['uid'])
-                 and details['seller_id'] != session['uid'] %}
-    
-                 <input 
-                     type="submit" 
-                     value="Add Bid" 
-                     {% if not isUserNotSeller %}
-                         disabled
-                     {% endif %}
-                 >
+            <input type="number" id="bid" name="bid" step="any" required><br>
+            <input type="submit" value="Add Bid" id="addBidButton">
         </form>
     {% endif %}
 </div>
 <div>
-    {% if bidHistory %}
-        <table>
-            <thead>
-                <tr>
-                    <th>User Name</th>
-                    <th>Bid Amt</th>
-                    <th>Bid Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in bidHistory %}
-                    <tr>
-                        <td>{{ row['user_name'] }}</td>
-                        <td>{{ row['Bid_amt'] }}</td>
-                        <td>{{ row['Bid_time'] }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No bids available.</p>
-    {% endif %}
+    <table id="bidHistoryTable">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Bid Amt</th>
+                <th>Bid Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--populate table-->
+        </tbody>
+    </table>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    var currentBidCount = 0;
+    var topBidder = 0;
+
+    document.getElementById('bidForm').addEventListener('submit', function(event) {
+        // Prevent the default form submission
+        event.preventDefault();
+
+        if (topBidder=="{{ session['uid'] }}") {
+            alert('You are the top bidder.');
+        } else {
+            document.getElementById('bidForm').submit();
+        }
+    });
+
+    function updateLatestBidDetails() {
+    $.ajax({
+        url: '/latestBidDetails/{{ details["Auction_id"] }}',
+        type: 'GET',
+        dataType: 'json',
+        success: function (latestDetails) {
+            if (currentBidCount !== latestDetails['bid_count']) {
+                currentBidCount = latestDetails['bid_count'];
+                $('#maxBid').text(latestDetails['latest_bid_amt']);
+                $('#maxBidTime').text(latestDetails['latest_bid_time']);
+                var bidAmount = parseFloat(latestDetails['latest_bid_amt']);
+                var bidIncrement = parseFloat("{{ details['bidInc'] }}");
+                $('#expectedBidamt').text(bidAmount + bidIncrement);
+                $('#bidCount').text(latestDetails['bid_count']);
+                getBidHistory();
+            }
+        },
+        error: function (error) {
+            console.log('Error fetching latest bid details:', error);
+        }
+    });
+}
+
+
+
+    // Function to fetch bid data from the server and append to the table
+    function getBidHistory() {
+        var bidHistoryTable = $('#bidHistoryTable').find('tbody');
+
+        // Make an AJAX request to fetch bid data
+        $.ajax({
+            url: '/bidHistory/{{ details["Auction_id"] }}',
+            type: 'GET',
+            dataType: 'json',
+            success: function (bidHistory) {
+                // Create a new tbody element with the new data
+                var newTbody = $('<tbody>');
+
+                // Loop through the bid history data and append rows to the new tbody
+                bidHistory.forEach(function (row) {
+                    var newRow = '<tr><td>' + row['user_name'] + '</td><td>' + row['Bid_amt'] + '</td><td>' + row['Bid_time'] + '</td></tr>';
+                    newTbody.append(newRow);
+                });
+
+                // Replace the existing tbody with the new one
+                bidHistoryTable.html(newTbody.html());
+                topBidder = bidHistory[0]['User_id'];
+                $('#bid').val($('#expectedBidamt').text());
+                $('#bid').prop('min', $('#expectedBidamt').text());
+            },
+            error: function (error) {
+                console.log('Error fetching bid history:', error);
+            }
+        });
+    }
+
+    updateLatestBidDetails();
+
+    // Call the function every 5 seconds
+    setInterval(function () {
+        updateLatestBidDetails();
+    }, 1000);
+</script>
+
 {% endblock %}

@@ -1,6 +1,12 @@
 
 function openDialog(auctionId,auctionText) {
-    document.getElementById('dialogTitle').innerText = auctionText;
+    var dialogTitle = document.getElementById('dialogTitle');
+    dialogTitle.innerText = auctionText;
+    dialogTitle.style.cursor = 'pointer';
+    dialogTitle.addEventListener('click', function () {
+        // Redirect to another page when the title is clicked
+        window.location.href = `/auctionDetails/${auctionId}`; // Replace with the actual URL you want to redirect to
+    });
     // Get the table body in the dialog
     var dialogTableBody = document.getElementById('dialogTable').getElementsByTagName('tbody')[0];
     

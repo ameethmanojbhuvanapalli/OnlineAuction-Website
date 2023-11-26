@@ -82,9 +82,27 @@ def auctionDetails(aid):
     db_cursor = current_app.config['DB_CURSOR']
     db_cursor.execute("{CALL SP_auctionDetailswithID(?)}",(aid))
     details = db_cursor.fetchone()
+    return render_template('auctionDetails.htm', details=details)
+
+@auctionDetails_bp.route('/bidHistory/<int:aid>')
+def bidHistory(aid):
+    db_cursor = current_app.config['DB_CURSOR']
     db_cursor.execute("{CALL SP_bidHistorywithAuctionID(?)}",(aid))
-    bidHistory = db_cursor.fetchall()
-    return render_template('auctionDetails.htm',details=details,bidHistory=bidHistory)
+    column_names = [desc[0] for desc in db_cursor.description]
+    bidHistory = [dict(zip(column_names, row)) for row in db_cursor.fetchall()]
+    return jsonify(bidHistory)
+
+@auctionDetails_bp.route('/latestBidDetails/<int:aid>')
+def latestBidDetails(aid):
+    db_cursor = current_app.config['DB_CURSOR']
+    db_cursor.execute("{CALL SP_getLatestBidDetails(?)}", (aid))
+    
+    # Check if there is a row to fetch
+    row = db_cursor.fetchone()
+    column_names = [desc[0] for desc in db_cursor.description]
+    latestBidDetails = dict(zip(column_names, row))
+    return jsonify(latestBidDetails)
+
 
 @auctionDetails_bp.route('/addBid/<int:aid>',methods=['GET', 'POST'])
 def addBid(aid):
@@ -135,7 +153,7 @@ def addAuction():
         try:
             
             # Execute the stored procedure
-            '''
+            
             db_cursor.execute("{CALL SP_insertAuctionItems (?,?,?,?,?,?,?,?,?,?,?,?,?)}",
                              item_name, item_img_path, mrp, seller_id, item_desc, category_id, item_status_id,
                              auction_text, base_price, reserve_price, bid_inc, start_date, end_date)
@@ -143,7 +161,7 @@ def addAuction():
             db_cursor.commit()
             
             return redirect(url_for('myAuctions.myAuctions'))
-            '''
+            
         except Exception as e:
             db_cursor.rollback()
             return f'Error creating auction: {str(e)}'
