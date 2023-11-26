@@ -1,6 +1,7 @@
 {% extends "base.htm" %}
 
 {% block content %}
+
 <div>
     <table style="width:100%;">
         <tr>
@@ -95,6 +96,11 @@
             <td>:</td>
             <td id="bidCount"></td>
         </tr>
+        <tr>
+            <td>Remaining Time</td>
+            <td>:</td>
+            <td id="timeRemaining"></td>
+        </tr>
     </table>
 </div>
 
@@ -149,14 +155,13 @@
         type: 'GET',
         dataType: 'json',
         success: function (latestDetails) {
-            if (currentBidCount !== latestDetails['bid_count']) {
-                currentBidCount = latestDetails['bid_count'];
-                $('#maxBid').text(latestDetails['latest_bid_amt']);
-                $('#maxBidTime').text(latestDetails['latest_bid_time']);
-                var bidAmount = parseFloat(latestDetails['latest_bid_amt']);
-                var bidIncrement = parseFloat("{{ details['bidInc'] }}");
-                $('#expectedBidamt').text(bidAmount + bidIncrement);
-                $('#bidCount').text(latestDetails['bid_count']);
+            $('#timeRemaining').text(latestDetails['remainingTime']);
+            if (currentBidCount !== latestDetails['Bid_count']) {
+                currentBidCount = latestDetails['Bid_count'];
+                $('#maxBid').text(latestDetails['max_bid']);
+                $('#maxBidTime').text(latestDetails['last_bid_time']);
+                $('#expectedBidamt').text(latestDetails['expectedBidamt']);
+                $('#bidCount').text(latestDetails['Bid_count']);
                 getBidHistory();
             }
         },
@@ -165,8 +170,6 @@
         }
     });
 }
-
-
 
     // Function to fetch bid data from the server and append to the table
     function getBidHistory() {
@@ -206,5 +209,6 @@
         updateLatestBidDetails();
     }, 1000);
 </script>
+
 
 {% endblock %}

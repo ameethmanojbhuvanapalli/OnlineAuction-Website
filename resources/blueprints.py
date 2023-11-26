@@ -95,7 +95,7 @@ def bidHistory(aid):
 @auctionDetails_bp.route('/latestBidDetails/<int:aid>')
 def latestBidDetails(aid):
     db_cursor = current_app.config['DB_CURSOR']
-    db_cursor.execute("{CALL SP_getLatestBidDetails(?)}", (aid))
+    db_cursor.execute("{CALL SP_auctionDetailswithID(?)}", (aid))
     
     # Check if there is a row to fetch
     row = db_cursor.fetchone()
