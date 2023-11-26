@@ -3,11 +3,38 @@
 {% block title %}Add Auction{% endblock %}
 
 {% block content %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get today's date in the format expected by datetime-local input
+        var today = new Date().toISOString().slice(0, 16);
+
+        // Set the minimum value for the Start Date input
+        var startDateInput = document.getElementsByName("startDate")[0];
+        startDateInput.min = today;
+
+        // Set up an event listener for changes in the Start Date input
+        startDateInput.addEventListener("input", function () {
+            // Get the selected date from the Start Date input
+            var selectedDate = new Date(startDateInput.value);
+
+            // Add 4 days to the selected date
+            selectedDate.setHours(selectedDate.getHours() + 24);
+            console.info(selectedDate)
+            // Format the new date in the format expected by datetime-local input
+            var minEndDate = selectedDate.toISOString().slice(0, 16);
+            console.log(minEndDate)
+            // Update the minimum value for the End Date input
+            var endDateInput = document.getElementsByName("endDate")[0];
+            endDateInput.min = minEndDate;
+            endDateInput.value = minEndDate;
+        });
+    });
+</script>
 <div class="container">
     <h2>Create Auction</h2>
-    <form action="/addAuction" method="post" onsubmit="return validateDates()">
+    <form action="/addAuction" method="post">
         <table class="table">
-            <!-- Item Details -->
+            <!-- Item Details 
             <tr>
                 <th colspan="2"><h3>Item Details</h3></th>
             </tr>
@@ -48,9 +75,9 @@
                 <td><label for="Item_desc" class="form-label">Item Description:</label></td>
                 <td><textarea name="Item_desc" rows="4" class="form-control" required></textarea></td>
             </tr>
-            <!-- ... (other item details fields) ... -->
+            -->
 
-            <!-- Auction Details -->
+            <!-- Auction Details 
             <tr>
                 <th colspan="2"><h3 class="mt-4">Auction Details</h3></th>
             </tr>
@@ -70,7 +97,7 @@
                 <td><label for="bidInc" class="form-label">Bid Increment:</label></td>
                 <td><input type="number" name="bidInc" step="0.01" class="form-control" required></td>
             </tr>
-
+            -->
             <!-- Auction Dates -->
             <tr>
                 <td><label for="startDate" class="form-label">Start Date:</label></td>

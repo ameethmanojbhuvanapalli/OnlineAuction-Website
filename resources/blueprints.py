@@ -135,6 +135,7 @@ def addAuction():
         try:
             
             # Execute the stored procedure
+            '''
             db_cursor.execute("{CALL SP_insertAuctionItems (?,?,?,?,?,?,?,?,?,?,?,?,?)}",
                              item_name, item_img_path, mrp, seller_id, item_desc, category_id, item_status_id,
                              auction_text, base_price, reserve_price, bid_inc, start_date, end_date)
@@ -142,6 +143,7 @@ def addAuction():
             db_cursor.commit()
             
             return redirect(url_for('myAuctions.myAuctions'))
+            '''
         except Exception as e:
             db_cursor.rollback()
             return f'Error creating auction: {str(e)}'
