@@ -1,0 +1,52 @@
+{% extends "base.htm" %}
+{% block title %}My Bids{% endblock %}
+
+{% block content %}
+    <h1>My Bids</h1>
+    
+    {% if myBids %}
+        <table border="1" id="bidsTable">
+            <thead>
+                <tr>
+                    <th>Auction ID</th>
+                    <th>Auction Text</th>
+                    <th>Latest Bid Time</th>
+                    <th>No. of Bids</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bid in myBids %}
+                    <tr>
+                        <td>{{ bid.Auction_id }}</td>
+                        <td>{{ bid.Auction_text }}</td>
+                        <td>{{ bid.latest_bid_time }}</td>
+                        <td>{{ bid.no_of_bids }}</td>
+                        <td>
+                            <button onclick="openDialog('{{ bid.Auction_id }}', '{{ bid.Auction_text }}')">View Bids</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No bids found.</p>
+    {% endif %}
+    <!-- Dialog box -->
+    <dialog id="bidsDialog">
+        <h2 id="dialogTitle">Bids for Auction</h2>
+        <table border="1" id="dialogTable">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Time</th>
+                    <!-- Add additional columns as needed -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be dynamically added here -->
+            </tbody>
+        </table>
+        <button onclick="closeDialog()">Close</button>
+    </dialog>
+{% endblock %}

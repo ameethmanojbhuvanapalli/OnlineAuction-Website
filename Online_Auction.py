@@ -43,6 +43,7 @@ app.register_blueprint(B.register_bp)
 app.register_blueprint(B.auctionDetails_bp)
 app.register_blueprint(B.myAuctions_bp)
 app.register_blueprint(B.addAuction_bp)
+app.register_blueprint(B.myBids_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)

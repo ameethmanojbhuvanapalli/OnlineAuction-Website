@@ -1,5 +1,5 @@
 from urllib.parse import urljoin
-from flask import Blueprint,render_template, request, redirect, url_for, current_app,session,flash
+from flask import Blueprint, jsonify,render_template, request, redirect, url_for, current_app,session,flash
 import pyodbc
 from datetime import datetime
 from resources import functions as F
@@ -147,3 +147,28 @@ def addAuction():
             return f'Error creating auction: {str(e)}'
 
     return render_template('addAuction.htm', categories=categories, item_statuses=item_statuses)
+
+
+myBids_bp = Blueprint('myBids',__name__)
+
+@myBids_bp.route('/myBids')
+def myBids():
+    db_cursor = current_app.config['DB_CURSOR']
+    user_id = session.get('uid', None)
+    db_cursor.execute("{CALL SP_getUserParticipatedAuctions(?)}", (user_id))
+    myBids = db_cursor.fetchall()
+    return render_template('myBids.htm', myBids=myBids)
+
+@myBids_bp.route('/myBids/<int:auctionId>')
+def get_bid_data(auctionId):
+    db_cursor = current_app.config['DB_CURSOR']
+    user_id = session.get('uid', None)
+    db_cursor.execute("{CALL SP_getUserBidswithAuction(?,?)}", (user_id, auctionId))
+    
+    # Get column names from cursor.description
+    column_names = [desc[0] for desc in db_cursor.description]
+    
+    # Convert rows to a list of dictionaries using column names
+    bid_data = [dict(zip(column_names, row)) for row in db_cursor.fetchall()]
+    
+    return jsonify(bid_data)

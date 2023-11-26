@@ -122,3 +122,11 @@ input[type="submit"]:hover {
 .link a:hover {
     text-decoration: underline;
 }
+
+dialog {
+    width: 80%;
+    max-width: 600px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
