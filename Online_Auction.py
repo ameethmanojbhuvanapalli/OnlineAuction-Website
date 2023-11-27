@@ -44,7 +44,7 @@ app.register_blueprint(B.auctionDetails_bp)
 app.register_blueprint(B.myAuctions_bp)
 app.register_blueprint(B.addAuction_bp)
 app.register_blueprint(B.myBids_bp)
-
+app.register_blueprint(B.payment_bp)
 
 app.register_blueprint(x.upload_bp)
 
