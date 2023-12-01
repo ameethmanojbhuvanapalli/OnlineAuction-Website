@@ -9,6 +9,17 @@ function formatTime(seconds) {
     return `${days}d ${hours}hrs ${minutes}min ${remainingSeconds}sec`;
 }
 
+function formatDateTime(dateString) {
+    const year = parseInt(dateString.slice(0, 4), 10);
+    const month = parseInt(dateString.slice(5, 7), 10) - 1; // Months are zero-based
+    const day = parseInt(dateString.slice(8, 10), 10);
+    const hour = parseInt(dateString.slice(11, 13), 10);
+    const minute = parseInt(dateString.slice(14, 16), 10);
+    const second = parseInt(dateString.slice(17, 19), 10);
+  
+    return new Date(year, month, day, hour, minute, second);
+  }
+
 function timeStringToSeconds(timeString) {
     var parts = timeString.split(':');
     var hours = parseInt(parts[0], 10);
@@ -34,7 +45,7 @@ function openModal(auctionId, auctionText) {
                 var cell1 = row.insertCell(0);
                 var cell2 = row.insertCell(1);
 
-                cell1.innerHTML = bid.Bid_amt;
+                cell1.innerHTML = '&#8377;'+bid.Bid_amt;
                 cell2.innerHTML = bid.Bid_time;
             });
 

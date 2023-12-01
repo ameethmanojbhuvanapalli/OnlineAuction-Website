@@ -5,45 +5,9 @@
 <style>
     .custom-card {
     height: 375px;
-    /* Set a fixed height for the card */
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
 }
-
-.custom-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transform: translateY(-5px);
-    transition: all 0.3s ease;
-}
-
-.custom-card img {
-    object-fit: cover;
-    height: 200px;
-    /* Set a fixed height for the image */
-}
-
-.card-body {
-    padding: 15px;
-    /* Adjust top and bottom padding as needed */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    /* Distribute space evenly between top and bottom */
-}
-
-.btn-group-sm>.btn,
-.btn-sm {
-    padding: .45rem .5rem !important;
-    font-size: .875rem;
-    line-height: 1.5;
-    border-radius: .2rem;
-}
-
 .category-card {
     height: 300px;
-    /* Set a different fixed height for the category card */
 }
 </style>
 
@@ -139,7 +103,7 @@
                     // Update specific content in card body based on auction status
                     var cardBody = $(`#${row['Auction_id']}_body`);
                     if (row['StatusDef_text'] == 'Closed') {
-                        cardBody.find('.closed-info').html(`<p><strong>Ended:</strong> ${row['Bid_amt']}</p>`);
+                        cardBody.find('.closed-info').html(`<p><strong>Ended:</strong> &#8377;${row['Bid_amt']}</p>`);
                     } else if (row['StatusDef_text'] == 'Upcoming') {
                         cardBody.find('.upcoming-info').html(`<p><strong>Opens in </strong> ${formatTime(timeStringToSeconds(row['openingTime']))}</p>`);
                     } else {

@@ -22,7 +22,7 @@
                 <tr class="table-light"> 
                     <td scope="row">{{ bid.Auction_id }}</td>
                     <td scope="row"><a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href='auctionDetails/{{ bid.Auction_id }}'> {{ bid.Auction_text }}</a></td>
-                    <td scope="row">{{ bid.latest_bid_time }}</td>
+                    <td scope="row" class="lastdate">{{ bid.latest_bid_time }}</td>
                     <td scope="row">{{ bid.no_of_bids }}</td>
                     <td scope="row">
                         <button class="btn btn-primary" onclick="openModal('{{ bid.Auction_id }}', '{{ bid.Auction_text }}')">View Bids</button>
@@ -37,36 +37,56 @@
     <p>Login to see your Bids</p>
     <a href="/login">
         <button>Login</button>
-    {% endif %}
+    </a>
+{% endif %}
 
-    <!-- Bootstrap Modal -->
-    <div class="modal fade" id="bidsModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Bids for Auction</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <table class="table" id="modalTable">
-                        <thead>
-                            <tr>
-                                <th>Amount</th>
-                                <th>Time</th>
-                                <!-- Add additional columns as needed -->
-                            </tr>
-                        </thead>
-                        <tbody id="modalTableBody">
-                            <!-- Data will be dynamically added here -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeModal()">Close</button>
-                </div>
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="bidsModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Bids for Auction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="modalTable">
+                    <thead>
+                        <tr>
+                            <th>Amount</th>
+                            <th>Time</th>
+                            <!-- Add additional columns as needed -->
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                        <!-- Data will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeModal()">Close</button>
             </div>
         </div>
     </div>
+</div>
 
+<!-- Move your script to the end of the HTML, just before the closing </body> tag -->
+<script>
     
+    const lastdateElements = document.querySelectorAll('.lastdate');
+    lastdateElements.forEach(element => {
+    const originalDateString = element.textContent.trim();
+
+    const formattedDate = formatDateTime(originalDateString);
+    if (formattedDate instanceof Date && !isNaN(formattedDate)) {
+        element.textContent = formattedDate.toUTCString(); // Adjust the formatting as needed
+    } else {
+        console.error(`Invalid date format: ${originalDateString}`);
+    }
+});
+
+</script>
+
+
+
+
 {% endblock %}

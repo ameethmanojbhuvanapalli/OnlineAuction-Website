@@ -206,6 +206,7 @@ payment_bp = Blueprint('payment',__name__)
 
 @payment_bp.route('/payment/<int:bidid>',methods=['GET', 'POST'])
 def payment(bidid):
+    F.referral()
     db_cursor = current_app.config['DB_CURSOR']
     userid=session.get('uid',None)
     paymentMode = F.getStatusDefinitionswithGrp(db_cursor,'Payment Mode')
@@ -213,9 +214,13 @@ def payment(bidid):
     billingInfo = db_cursor.fetchone()
     if request.method == 'POST':
         try:
-            db_cursor.execute("{CALL SP_addAuctionPayment(?)}", (bidid))
+            mode=int(request.form['paymentMethod'])
+            '''
+            db_cursor.execute("{CALL SP_addAuctionPayment(?,?)}", (bidid,mode))
             db_cursor.commit()
+            '''
+            return render_template('paydone.htm')
         except Exception as e:
             db_cursor.rollback()
             return f'Error creating auction: {str(e)}'
-    return render_template('payment.htm',paymentMode=paymentMode,billingInfo=billingInfo)
+    return render_template('payment.htm',paymentMode=paymentMode,billingInfo=billingInfo,bidid=bidid)

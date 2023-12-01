@@ -4,43 +4,9 @@
 {% block content %}
 <style>
     .custom-card {
-        height: 400px;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        overflow: hidden;
-    }
+    height: 400px;
+}
 
-    .custom-card img {
-        object-fit: cover;
-        height: 200px;
-    }
-
-    .card-body {
-        padding: 15px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .custom-card:hover {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transform: translateY(-5px);
-        transition: all 0.3s ease;
-    }
-
-    .btn-group-sm>.btn,
-    .btn-sm {
-        padding: .45rem .5rem;
-        font-size: .875rem;
-        line-height: 1.5;
-        border-radius: .2rem;
-    }
-
-    .category-card {
-        height: 300px;
-        /* Set a different fixed height for the category card */
-    }
 </style>
 <h1>My Auctions</h1>
 {% if 'uid' not in session %}
@@ -58,7 +24,7 @@
         {% set ns.current_status = row['Auction_status'] %}
         {% endif %}
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card custom-card">
+            <div class="card custom-card text-center">
                 <a href="/auctionDetails/{{ row['Auction_id'] }}" class="text-reset text-decoration-none">
                     <img src="{{ url_for('static', filename=row['Item_img_path']) }}" class="w-100" />
                     <div class="mask">
@@ -73,9 +39,9 @@
                     </div>
                     <div class="card-body">
                         <h5 class="card-title mb-3 text-primary fw-bold">{{ row['Auction_text'] }}</h5>
-                        <div class="{{ row['StatusDef_text'].lower() }}-info">
-                            <p><strong>Start Date:</strong> {{ row['startDate'] }}</p>
-                            <p><strong>End Date:</strong> {{ row['endDate'] }}</p>
+                        <div class="{{ row['StatusDef_text'].lower() }}-info auction-date-info">
+                            <p><strong>Start Date:</strong> <span id="formattedStartDate{{ loop.index }}">{{ row['startDate'] }}</span></p>
+                            <p><strong>End Date:</strong> <span id="formattedEndDate{{ loop.index }}">{{ row['endDate'] }}</span></p>
                         </div>
                     </div>
                 </a>
@@ -86,4 +52,28 @@
 </div>
 {% endif %}
 
+<script>
+    // Format start dates
+    const startDateElements = document.querySelectorAll('[id^="formattedStartDate"]');
+    startDateElements.forEach(element => {
+        const formattedDate = formatDateTime(element.textContent);
+        if (formattedDate instanceof Date && !isNaN(formattedDate)) {
+            element.textContent = formattedDate.toLocaleString(); // Adjust the formatting as needed
+        } else {
+            console.error(`Invalid date format: ${element.textContent}`);
+        }
+    });
+
+    // Format end dates
+    const endDateElements = document.querySelectorAll('[id^="formattedEndDate"]');
+    endDateElements.forEach(element => {
+        const formattedDate = formatDateTime(element.textContent);
+        if (formattedDate instanceof Date && !isNaN(formattedDate)) {
+            element.textContent = formattedDate.toLocaleString(); // Adjust the formatting as needed
+        } else {
+            console.error(`Invalid date format: ${element.textContent}`);
+        }
+    });
+</script>
+  
 {% endblock %}
