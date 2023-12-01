@@ -2,93 +2,71 @@
 {% block title %}My Bids{% endblock %}
 
 {% block content %}
-<script>
-    function openDialog(auctionId,auctionText) {
-    var dialogTitle = document.getElementById('dialogTitle');
-    dialogTitle.innerText = auctionText;
-    dialogTitle.style.cursor = 'pointer';
-    dialogTitle.addEventListener('click', function () {
-        // Redirect to another page when the title is clicked
-        window.location.href = `/auctionDetails/${auctionId}`; // Replace with the actual URL you want to redirect to
-    });
-    // Get the table body in the dialog
-    var dialogTableBody = document.getElementById('dialogTable').getElementsByTagName('tbody')[0];
-    
-    // Clear existing rows in the dialog table
-    dialogTableBody.innerHTML = '';
-    
-    // Fetch bid data using auctionId
-    fetch(`/myBids/${auctionId}`)
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(function(bid) {
 
-            var row = dialogTableBody.insertRow();
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
+<h1>My Bids</h1>
 
-            cell1.innerHTML = bid.Bid_amt;
-            cell2.innerHTML = bid.Bid_time;
-        });
-
-        document.getElementById('bidsDialog').showModal();
-    })
-    .catch(error => console.error('Error fetching bid data:', error));
-}
-    
-function closeDialog() {
-    document.getElementById('bidsDialog').close();
-}
-
-</script>
-
-    <h1>My Bids</h1>
-    
-    {% if myBids %}
-        <table border="1" id="bidsTable">
-            <thead>
-                <tr>
-                    <th>Auction ID</th>
-                    <th>Auction Text</th>
-                    <th>Latest Bid Time</th>
-                    <th>No. of Bids</th>
-                    <th>Action</th>
+{% if myBids %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover" id="bidsTable">
+        <thead>
+            <tr class="table-light">
+                <th scope="col">Auction ID</th>
+                <th scope="col">Auction Text</th>
+                <th scope="col">Last Bid Time</th>
+                <th scope="col">No. of Bids</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bid in myBids %}
+                <tr class="table-light"> 
+                    <td scope="row">{{ bid.Auction_id }}</td>
+                    <td scope="row"><a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href='auctionDetails/{{ bid.Auction_id }}'> {{ bid.Auction_text }}</a></td>
+                    <td scope="row">{{ bid.latest_bid_time }}</td>
+                    <td scope="row">{{ bid.no_of_bids }}</td>
+                    <td scope="row">
+                        <button class="btn btn-primary" onclick="openModal('{{ bid.Auction_id }}', '{{ bid.Auction_text }}')">View Bids</button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for bid in myBids %}
-                    <tr>
-                        <td>{{ bid.Auction_id }}</td>
-                        <td>{{ bid.Auction_text }}</td>
-                        <td>{{ bid.latest_bid_time }}</td>
-                        <td>{{ bid.no_of_bids }}</td>
-                        <td>
-                            <button onclick="openDialog('{{ bid.Auction_id }}', '{{ bid.Auction_text }}')">View Bids</button>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>Login to see your Bids</p>
-        <a href="/login">
-            <button>Login</button>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+    <p>Login to see your Bids</p>
+    <a href="/login">
+        <button>Login</button>
     {% endif %}
-    <!-- Dialog box -->
-    <dialog id="bidsDialog">
-        <h2 id="dialogTitle">Bids for Auction</h2>
-        <table border="1" id="dialogTable">
-            <thead>
-                <tr>
-                    <th>Amount</th>
-                    <th>Time</th>
-                    <!-- Add additional columns as needed -->
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data will be dynamically added here -->
-            </tbody>
-        </table>
-        <button onclick="closeDialog()">Close</button>
-    </dialog>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="bidsModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Bids for Auction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" id="modalTable">
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Time</th>
+                                <!-- Add additional columns as needed -->
+                            </tr>
+                        </thead>
+                        <tbody id="modalTableBody">
+                            <!-- Data will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
 {% endblock %}

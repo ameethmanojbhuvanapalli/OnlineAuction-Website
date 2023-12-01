@@ -1,95 +1,38 @@
-body, h1, p, label {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Roboto', sans-serif;
+.custom-card {
+    height: 375px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: linear-gradient(to right, #4CAF50, #64B5F6);
-    margin: 0;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
 }
 
-.container {
-    background-color: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    padding: 15%;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.custom-card img {
+    object-fit: cover;
+    height: 200px;
 }
 
-h1 {
-    color: #512da8;
-    font-size: 2.5em;
-    margin-bottom: 20px;
+.card-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-::placeholder {
-    display: block;
-    margin-top: 15px;
-    font-size: 1.3em;
-    color: #555;
+.custom-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
 }
 
-input {
-    width: 100%; 
-    padding: 14px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-    border: 2px solid #000;
-    border-radius: 10px;
-    background-color: #f7f7f7;
-    color: #333;
-    transition: border-color 0.3s ease;
+.btn-group-sm > .btn,
+.btn-sm {
+    padding: .45rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
 }
 
-input:focus {
-    outline: none;
-    border-color: #512da8;
-}
-
-input[type="submit"] {
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    padding: 12px;
-    font-size: 1.3em;
-    border: none;
-    background-color: #4CAF50;
-    color: #fff;
-}
-
-input[type="submit"]:hover {
-    background-color: #45a049;
-}
-
-.alert {
-    background-color: #e53935;
-    color: #fff;
-    padding: 14px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-.link {
-    margin-top: 20px;
-    font-size: 1.3em;
-    color: #333;
-}
-
-.link a {
-    text-decoration: none;
-    font-weight: bold;
-    color: #512da8;
-}
-
-.link a:hover {
-    text-decoration: underline;
+.category-card {
+    height: 300px;
+    /* Set a different fixed height for the category card */
 }

@@ -1,39 +1,160 @@
 {% extends "base.htm" %}
 
 {% block content %}
-    <!--<div class="main-container">
-        <div class="role-functions">
-            <h3>Role Functions</h3>
-            <ul>
-                {% for row in functions %}
-                    <li>{{ row['Function_name'] }}</li>
-                {% endfor %}
-            </ul>
-    </div>-->
-        <div class="product-list">
-            <h2>Welcome to My Website</h2>
-            <p>This is the home page content.</p>
-            {% if uname!=None %}
-                <p>Welcome, {{ uname }}!</p>
-            {% else %}
-                <p>Welcome, Guest!</p>
-            {% endif %}
-            
-            {% set ns=namespace(current_status = 0) %}
-            {% for row in auctionData %}
-                {% if ns.current_status != row['Auction_status'] %}
-                    <div class="status-header"><b>{{ row['StatusDef_text'] }}</b></div>
-                    {% set ns.current_status = row['Auction_status'] %}
-                {% endif %}
-                <div class="product-item">
-                    <img src="{{ url_for('static', filename=row['Item_img_path']) }}" alt="Item Image">
-                    <div class="product-details">
-                        <h3><a href="/auctionDetails/{{ row['Auction_id'] }}">{{ row['Auction_text'] }}</a></h3>
-                        <p><strong>Start Date:</strong> {{ row['startDate'] }}</p>
-                        <p><strong>End Date:</strong> {{ row['endDate'] }}</p>
-                    </div>
+
+<style>
+    .custom-card {
+    height: 375px;
+    /* Set a fixed height for the card */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.custom-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+}
+
+.custom-card img {
+    object-fit: cover;
+    height: 200px;
+    /* Set a fixed height for the image */
+}
+
+.card-body {
+    padding: 15px;
+    /* Adjust top and bottom padding as needed */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Distribute space evenly between top and bottom */
+}
+
+.btn-group-sm>.btn,
+.btn-sm {
+    padding: .45rem .5rem !important;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+}
+
+.category-card {
+    height: 300px;
+    /* Set a different fixed height for the category card */
+}
+</style>
+
+<!-- Welcome Section -->
+<h2>Welcome to My Website</h2>
+<p>This is the home page content.</p>
+{% if uname != None %}
+<p>Welcome, {{ uname }}!</p>
+{% else %}
+<p>Welcome, Guest!</p>
+{% endif %}
+
+<div class="text-center container py-5">
+    <h4 class="mt-4 mb-5"><strong>Categories</strong></h4>
+</div>
+
+<div class="row justify-content-center">
+    {% for row in categories %}
+    <div class="col-lg-2 col-md-6 mb-3">
+        <div class="card custom-card category-card">
+            <a href="" class="text-reset text-decoration-none">
+                <img src="{{ url_for('static', filename=row['img_path']) }}" class="w-100" />
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ row['category_name'] }}</h5>
+                    <a class="btn btn-outline-primary btn-sm" href="" data-abc="true">View Products</a>
                 </div>
-            {% endfor %}
+            </a>
         </div>
     </div>
+    {% endfor %}
+</div>
+
+<!-- Top Auctions Section -->
+<div class="text-center container py-5">
+    <h4 class="mt-4 mb-5"><strong>Top Auctions</strong></h4>
+</div>
+
+{% set ns = namespace(current_status = 0) %}
+<section style="background-color: #eee;">
+    <div class="text-center container py-5">
+        {% for row in auctionData %}
+        {% if ns.current_status != row['Auction_status'] %}
+        {% if ns.current_status != 0 %}
+    </div>
+    {% endif %}
+    <h5><strong>{{ row['StatusDef_text'] }}</strong></h5>
+    <div class="row justify-content-center">
+        {% set ns.current_status = row['Auction_status'] %}
+        {% endif %}
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card custom-card">
+                <a href="/auctionDetails/{{ row['Auction_id'] }}" class="text-reset text-decoration-none">
+                    <img id="{{ row['Auction_id'] }}_image" src="{{ url_for('static', filename=row['Item_img_path']) }}"
+                        class="w-100" />
+                    <div class="mask">
+                        <div class="d-flex justify-content-start align-items-end h-100">
+                            <h5><span
+                                    class="badge ms-2 {% if row['StatusDef_text'].lower() == 'closed' %}bg-danger{% elif row['StatusDef_text'].lower() == 'upcoming' %}bg-warning{% elif row['StatusDef_text'].lower() == 'active' %}bg-success{% endif %}">{{
+                                    row['StatusDef_text'] }}</span></h5>
+                        </div>
+                    </div>
+                    <div class="card-body" id="{{ row['Auction_id'] }}_body">
+                        <h5 class="card-title mb-3 text-primary fw-bold" id="{{ row['Auction_id'] }}_title">{{
+                            row['Auction_text'] }}</h5>
+                        <div class="{{ row['StatusDef_text'].lower() }}-info"></div>
+                    </div>
+
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<script>
+    function refreshAuctions() {
+        // Make an AJAX request to the server
+        $.ajax({
+            type: 'GET',
+            url: '/get_updated_auctions',
+            dataType: 'json',
+            success: function (data) {
+                // Assuming the server responds with a JSON array of updated auction data
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i];
+
+                    // Update values by ID
+                    $(`#${row['Auction_id']}_status`).text(row['StatusDef_text']);
+                    $(`#${row['Auction_id']}_image`).attr('src', `/static/${row['Item_img_path']}`);
+                    var titleElement = $(`#${row['Auction_id']}_title`);
+                    titleElement.text(row['Auction_text']);
+
+                    // Update specific content in card body based on auction status
+                    var cardBody = $(`#${row['Auction_id']}_body`);
+                    if (row['StatusDef_text'] == 'Closed') {
+                        cardBody.find('.closed-info').html(`<p><strong>Ended:</strong> ${row['Bid_amt']}</p>`);
+                    } else if (row['StatusDef_text'] == 'Upcoming') {
+                        cardBody.find('.upcoming-info').html(`<p><strong>Opens in </strong> ${formatTime(timeStringToSeconds(row['openingTime']))}</p>`);
+                    } else {
+                        cardBody.find('.active-info').html(`<p><strong>Closes in </strong>  ${formatTime(timeStringToSeconds(row['remainingTime']))}</p>`);
+                    }
+                }
+            },
+            error: function (error) {
+                console.error('Error fetching updated auctions:', error);
+            }
+        });
+    }
+
+    refreshAuctions();
+
+    setInterval(refreshAuctions, 1000);
+</script>
 {% endblock %}

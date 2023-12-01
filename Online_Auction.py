@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session
+from flask import Flask, jsonify, render_template, session
 import pyodbc
 from resources import functions as F,blueprints as B,x
 
@@ -31,9 +31,23 @@ def home():
     return render_template(
         "index.htm",
         uname=user_name,
-        auctionData=F.getHomePageAuctions(app.config['DB_CURSOR'],3),
-        functions=F.getRoleFunctions(app.config['DB_CURSOR'],role_id)
-        ) 
+        auctionData=F.getHomePageAuctions(app.config['DB_CURSOR'], 3),
+        functions=F.getRoleFunctions(app.config['DB_CURSOR'], role_id),
+        categories=F.categoryDetails(app.config['DB_CURSOR'], 0)
+    )
+
+@app.route('/get_updated_auctions')
+def get_updated_auctions():
+    updated_auctions = F.getHomePageAuctions(app.config['DB_CURSOR'], 3)
+
+    # Get column names from the cursor description
+    columns = [column[0] for column in app.config['DB_CURSOR'].description]
+
+    # Convert rows to dictionaries
+    auctions_as_dicts = [dict(zip(columns, auction)) for auction in updated_auctions]
+
+    return jsonify(auctions_as_dicts)
+
 
 
 
