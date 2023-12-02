@@ -3,84 +3,193 @@
 {% block content %}
 
 <style>
+
+    .user-functions {
+        background-color: #f5f5f5; /* Added background color */
+        padding: 20px; /* Adjusted padding */
+        height: 100%;
+        width: 20%;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        margin-left: 0%;
+        top: 5%;
+        position: fixed;
+        overflow-y: auto;
+    }
+
+    .user-functions::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    .user-functions::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
+
+    .list-group {
+        width: 400px !important;
+    }
+
+    .list-group-item {
+        margin-top: 10px;
+        border-radius: none;
+        background: darkcyan;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .list-group-item:hover {
+        transform: scaleX(1.1);
+    }
+
+    .check {
+        opacity: 0;
+        transition: all 0.6s ease-in-out;
+    }
+
+    .list-group-item:hover .check {
+        opacity: 1;
+    }
+
+    .about span {
+        font-size: 12px;
+        margin-right: 10px;
+    }
+     /* Add styles for the card title */
+     .card-title {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    /* Style the badge inside the card */
+    .card .badge {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    /* Style the card body */
+    .card-body {
+        padding: 10px;
+        margin-top: auto;
+    }
+
+    /* Add styles for the auction information */
+    .closed-info, .upcoming-info, .active-info {
+        font-size: 14px;
+        color: #777;
+    }
+
+    /* Add a horizontal line between title and content */
+    .card-title:after {
+        content: "";
+        display: block;
+        border-bottom: 1px solid #ddd;
+        margin-top: 5px;
+    }
     .custom-card {
-    height: 375px;
-}
-.category-card {
-    height: 300px;
-}
+        height: 300px;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
 </style>
 
-<!-- Welcome Section -->
-<h2>Welcome to My Website</h2>
-<p>This is the home page content.</p>
-{% if uname != None %}
-<p>Welcome, {{ uname }}!</p>
-{% else %}
-<p>Welcome, Guest!</p>
-{% endif %}
-
-<div class="text-center container py-5">
-    <h4 class="mt-4 mb-5"><strong>Categories</strong></h4>
-</div>
-
-<div class="row justify-content-center">
-    {% for row in categories %}
-    <div class="col-lg-2 col-md-6 mb-3">
-        <div class="card custom-card category-card">
-            <a href="" class="text-reset text-decoration-none">
-                <img src="{{ url_for('static', filename=row['img_path']) }}" class="w-100" />
-                <div class="card-body text-center">
-                    <h5 class="card-title">{{ row['category_name'] }}</h5>
-                    <a class="btn btn-outline-primary btn-sm" href="" data-abc="true">View Products</a>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left section for user functions -->
+        <div class="col-lg-3">
+            {% if 'uid' in session %}
+                <div class="container d-flex justify-content-center user-functions bg-light">
+                    <ul class="list-group mt-5 text-white">
+                        <h4 class="text-center mb-4 text-dark">User Functions</h4>
+                        {% for func in functions %}
+                            <li class="list-group-item d-flex justify-content-between align-content-center">
+                                <a class="text-decoration-none" href="/{{ func.Function_url }}">
+                                    <div class="d-flex flex-row">
+                                        <div class="ml-2">
+                                            <h6 class="mb-0 text-light">{{ func.Function_name }}</h6>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
-            </a>
+            {% endif %}
         </div>
-    </div>
-    {% endfor %}
-</div>
 
-<!-- Top Auctions Section -->
-<div class="text-center container py-5">
-    <h4 class="mt-4 mb-5"><strong>Top Auctions</strong></h4>
-</div>
+        <!-- Right section for categories and top auctions -->
+        <div class="col-lg-9">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="text-center container mt-4 mb-4">
+                        <h4 class="mt-4 mb-5 text-light"><strong>Categories</strong></h4>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="text-center container mt-4 mb-4">
+                        <h4 class="mt-4 mb-5 text-light"><strong>==Categories==</strong></h4>
+                    </div>
+                </div>
+                {% for row in categories %}
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card custom-card category-card">
+                        <a href="" class="text-reset text-decoration-none">
+                            <img src="{{ url_for('static', filename=row['img_path']) }}" class="w-100" />
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ row['category_name'] }}</h5>
+                                <a class="btn btn-outline-primary btn-sm" href="" data-abc="true">View Products</a>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
 
-{% set ns = namespace(current_status = 0) %}
-<section style="background-color: #eee;">
-    <div class="text-center container py-5">
-        {% for row in auctionData %}
-        {% if ns.current_status != row['Auction_status'] %}
-        {% if ns.current_status != 0 %}
-    </div>
-    {% endif %}
-    <h5><strong>{{ row['StatusDef_text'] }}</strong></h5>
-    <div class="row justify-content-center">
-        {% set ns.current_status = row['Auction_status'] %}
-        {% endif %}
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card custom-card">
-                <a href="/auctionDetails/{{ row['Auction_id'] }}" class="text-reset text-decoration-none">
-                    <img id="{{ row['Auction_id'] }}_image" src="{{ url_for('static', filename=row['Item_img_path']) }}"
-                        class="w-100" />
-                    <div class="mask">
-                        <div class="d-flex justify-content-start align-items-end h-100">
-                            <h5><span
-                                    class="badge ms-2 {% if row['StatusDef_text'].lower() == 'closed' %}bg-danger{% elif row['StatusDef_text'].lower() == 'upcoming' %}bg-warning{% elif row['StatusDef_text'].lower() == 'active' %}bg-success{% endif %}">{{
-                                    row['StatusDef_text'] }}</span></h5>
+            <!-- Top Auctions Section -->
+            <div class="text-center container mt-4 mb-4">
+                <h4 class="mt-4 mb-5 text-light"><strong>==Top Auctions==</strong></h4>
+                {% set ns = namespace(current_status = 0) %}
+                <div class="text-center container mt-4 mb-4">
+                    {% for row in auctionData %}
+                    {% if ns.current_status != row['Auction_status'] %}
+                    {% if ns.current_status != 0 %}
+                </div>
+                {% endif %}
+                <h5 class="text-light"><strong>{{ row['StatusDef_text'] }}</strong></h5>
+                <div class="row">
+                    {% set ns.current_status = row['Auction_status'] %}
+                    {% endif %}
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card custom-card">
+                            <a href="/auctionDetails/{{ row['Auction_id'] }}" class="text-reset text-decoration-none">
+                                <img id="{{ row['Auction_id'] }}_image"
+                                    src="{{ url_for('static', filename=row['Item_img_path']) }}" class="w-100" />
+                                <div class="mask">
+                                    <div class="d-flex justify-content-start align-items-end h-100">
+                                        <h5><span
+                                                class="badge ms-2 {% if row['StatusDef_text'].lower() == 'closed' %}bg-danger{% elif row['StatusDef_text'].lower() == 'upcoming' %}bg-warning{% elif row['StatusDef_text'].lower() == 'active' %}bg-success{% endif %}">{{
+                                                row['StatusDef_text'] }}</span></h5>
+                                    </div>
+                                </div>
+                                <div class="card-body" id="{{ row['Auction_id'] }}_body">
+                                    <h5 class="card-title mb-3 text-primary fw-bold" id="{{ row['Auction_id'] }}_title">
+                                        {{
+                                        row['Auction_text'] }}</h5>
+                                    <div class="{{ row['StatusDef_text'].lower() }}-info"></div>
+                                </div>
+                            </a>
                         </div>
                     </div>
-                    <div class="card-body" id="{{ row['Auction_id'] }}_body">
-                        <h5 class="card-title mb-3 text-primary fw-bold" id="{{ row['Auction_id'] }}_title">{{
-                            row['Auction_text'] }}</h5>
-                        <div class="{{ row['StatusDef_text'].lower() }}-info"></div>
-                    </div>
-
-                </a>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-        {% endfor %}
     </div>
-</section>
+</div>
 
 <script>
     function refreshAuctions() {

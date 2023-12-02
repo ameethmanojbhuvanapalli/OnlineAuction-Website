@@ -11,49 +11,80 @@
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
     <style>
       body {
+        background-color: #008080;
           display: flex;
           flex-direction: column;
-          min-height: 100vh;
+          overflow-x: hidden;
       }
 
-      .content {
-          flex: 1;
+      .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+      footer {
+          position: relative;
+          margin-top: auto;
+          width: 100%;
       }
   </style>
 </head>
 <body>
-    <header>
-        <h1>Online Auction</h1>
-    </header>
-            <nav class="navbar navbar-expand-lg bg-body-transparent flex flex-row justify-center">
-                <div class="container-fluid">
-                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                  </button>
-                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                      <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">Home</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/myAuctions">My Auctions</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/myBids">My Bids</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/addAuction">Create Auction</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </nav>
-            
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item d-flex justify-content-center">
+                        <form class="d-flex">
+                            <div class="input-group">
+                                <input class="form-control" type="search" placeholder="Search" aria-label="Search" style="width:800px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                                <button class="btn btn-outline-success" type="submit">Search</button>
+                            </div>
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2 active" aria-current="page" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="#">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="#">Pricing</a>
+                    </li>
+    
+                    {% if 'uid' in session %}
+                    <!-- If uid is in session, display Account dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link mx-2 dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Account
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="/updateProfile">Update Profile</a></li>
+                            <li><a class="dropdown-item" href="/myAuctions">My Auctions</a></li>
+                            <li><a class="dropdown-item" href="/myBids">My Bids</a></li>
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <!-- If uid is not in session, display Login/Register button -->
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="/login">Login/Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
     <div class="content">
         {% block content %}{% endblock %}
     </div>
-    <a href="/payment/248">pay</a>
-    <footer class="bg-dark text-light py-4 mt-auto">
+    <footer class="bg-dark text-light py-3">
       <div class="container">
           <div class="row">
               <div class="col-md-4">
