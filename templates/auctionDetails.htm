@@ -1,218 +1,358 @@
 {% extends "base.htm" %}
 
 {% block content %}
+                <div class="col-lg-12">
+                    <div class="text-center container mt-4 mb-4">
+                        <h4 class="mt-4 mb-5 text-light"><strong>Categories</strong></h4>
+                    </div>
+                </div>
+<style>
 
-<div>
-    <table style="width:100%;">
-        <tr>
-            <td>Aution Name</td>
-            <td>:</td>
-            <td>{{ details['Auction_text'] }}</td>
-        </tr>
-        <tr>
-            <td>Start Date</td>
-            <td>:</td>
-            <td>{{ details['startDate'] }}</td>
-        </tr>
-        <tr>
-            <td>End Date</td>
-            <td>:</td>
-            <td>{{ details['endDate'] }}</td>
-        </tr>
-        <tr>
-            <td>Base Price</td>
-            <td>:</td>
-            <td>{{details['basePrice']}}</td>
-        </tr>
-        <tr>
-            <td>Reserve Price</td>
-            <td>:</td>
-            <td>{{details['reservePrice']}}</td>
-        </tr>
-        <tr>
-            <td>Increment</td>
-            <td>:</td>
-            <td>{{details['bidInc']}}</td>
-        </tr>
-        <tr>
-            <td>Seller ID</td>
-            <td>:</td>
-            <td>{{details['seller_id']}}</td>
-        </tr>
-        <tr>
-            <td>Seller Name</td>
-            <td>:</td>
-            <td>{{details['user_name']}}</td>
-        </tr>
-    </table>
-    <table style="width:100%;">
-        <tr>
-            <td>Item</td>
-            <td>:</td>
-            <td>{{details['Item_Name']}}</td>
-        </tr>
-        <tr>
-            <td>Item Description</td>
-            <td>:</td>
-            <td>{{details['Item_desc']}}</td>
-        </tr>
-        <tr>
-            <td>Image</td>
-            <td>:</td>
-            <td><img src="{{ url_for('static', filename=details['Item_img_path']) }}" width="200" height="200"></td>
-        </tr>
-        <tr>
-            <td>Maximum Retail Price</td>
-            <td>:</td>
-            <td>{{details['MRP']}}</td>
-        </tr>
-        <tr>
-            <td>Category</td>
-            <td>:</td>
-            <td>{{details['category_name']}}</td>
-        </tr>
-    </table>
-</div>
+    /*****************globals*************/
+    
+    img {
+  height: 350px;
+width: 550px; }
 
-<div>
-    <table id="latestBidDetails">
-        <tr>
-            <td>Last Bid Price</td>
-            <td>:</td>
-            <td id="maxBid"></td>
-        </tr>
-        <tr>
-            <td>Last Bid Time</td>
-            <td>:</td>
-            <td id="maxBidTime"></td>
-        </tr>
-        <tr>
-            <td>Expected Bid</td>
-            <td>:</td>
-            <td id="expectedBidamt"></td>
-        </tr>
-        <tr>
-            <td>Bid Count</td>
-            <td>:</td>
-            <td id="bidCount"></td>
-        </tr>
-        <tr>
-            <td>Remaining Time</td>
-            <td>:</td>
-            <td id="timeRemaining"></td>
-        </tr>
-    </table>
-</div>
-
-<div>
-    {% if 'uid' not in session %}
-        <p>Login to add your bids</p>
-        <a href="/login">
-            <button>Login</button>
-        </a>
-    {% else %}
-        <form method="post" action="/addBid/{{ details['Auction_id'] }}" id="bidForm">
-            <label for="bid">Bid:</label>
-            <input type="number" id="bid" name="bid" step="any" required><br>
-            <input type="submit" value="Add Bid" id="addBidButton">
-        </form>
-    {% endif %}
-</div>
-<div>
-    <table id="bidHistoryTable">
-        <thead>
-            <tr>
-                <th>User Name</th>
-                <th>Bid Amt</th>
-                <th>Bid Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!--populate table-->
-        </tbody>
-    </table>
-</div>
+    
+    .preview {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+          -ms-flex-direction: column;
+              flex-direction: column; }
+      @media screen and (max-width: 996px) {
+        .preview {
+          margin-bottom: 20px; } }
+    
+    .preview-pic {
+      -webkit-box-flex: 1;
+      -webkit-flex-grow: 1;
+          -ms-flex-positive: 1;
+              flex-grow: 1; }
+    
+    .card {
+      margin-top: 50px;
+      background: #eee;
+      padding: 3em;
+      line-height: 1.5em; }
+    
+    @media screen and (min-width: 997px) {
+      .wrapper {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex; } }
+    
+    .details {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+          -ms-flex-direction: column;
+              flex-direction: column; }
+    
+    .product-title, .price, .sizes, .colors {
+      text-transform: UPPERCASE;
+      font-weight: bold; }
+    
+    .product-title {
+      margin-top: 0; }
+    
+    .size {
+      margin-right: 10px; }
+      .size:first-of-type {
+        margin-left: 40px; }
+    
+    .color {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+      height: 2em;
+      width: 2em;
+      border-radius: 2px; }
+      .color:first-of-type {
+        margin-left: 20px; }
+    
+    .add-to-cart, .like {
+      background: #ff9f1a;
+      padding: 1.2em 1.5em;
+      border: none;
+      text-transform: UPPERCASE;
+      font-weight: bold;
+      color: #fff;
+      -webkit-transition: background .3s ease;
+              transition: background .3s ease; }
+      .add-to-cart:hover, .like:hover {
+        background: #b36800;
+        color: #fff; }
+    
+    
+    @-webkit-keyframes opacity {
+      0% {
+        opacity: 0;
+        -webkit-transform: scale(3);
+                transform: scale(3); }
+      100% {
+        opacity: 1;
+        -webkit-transform: scale(1);
+                transform: scale(1); } }
+    
+    @keyframes opacity {
+      0% {
+        opacity: 0;
+        -webkit-transform: scale(3);
+                transform: scale(3); }
+      100% {
+        opacity: 1;
+        -webkit-transform: scale(1);
+                transform: scale(1); } }
+    
+    /*# sourceMappingURL=style.css.map */
+    .nav-tabs .nav-item {
+            width: 33.33%;
+            text-align: center;
+        }
+    </style>
 
 <script>
     var currentBidCount = 0;
     var topBidder = 0;
+    var winbidid = 0;
 
-    document.getElementById('bidForm').addEventListener('submit', function (event) {
-        // Prevent the default form submission
-        event.preventDefault();
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('bidForm').addEventListener('submit', function (event) {
+            // Prevent the default form submission
+            event.preventDefault();
 
-        // Check if the user is the seller
-        var isSeller = "{{ session['uid'] }}" === "{{ details['seller_id'] }}";
+            // Check if the user is the seller
+            var isSeller = "{{ session['uid'] }}" === "{{ details['seller_id'] }}";
 
-        if (isSeller) {
-            alert('You cannot bid for your Auctions');
-        } else if (topBidder === "{{ session['uid'] }}") {
-            alert('You are the top bidder.');
-        } else {
-            document.getElementById('bidForm').submit();
-        }
-    });
-
-    function updateLatestBidDetails() {
-    $.ajax({
-        url: '/latestBidDetails/{{ details["Auction_id"] }}',
-        type: 'GET',
-        dataType: 'json',
-        success: function (latestDetails) {
-            $('#timeRemaining').text(latestDetails['remainingTime']);
-            if (currentBidCount !== latestDetails['Bid_count']) {
-                currentBidCount = latestDetails['Bid_count'];
-                $('#maxBid').text(latestDetails['max_bid']);
-                $('#maxBidTime').text(latestDetails['last_bid_time']);
-                $('#expectedBidamt').text(latestDetails['expectedBidamt']);
-                $('#bidCount').text(latestDetails['Bid_count']);
-                getBidHistory();
+            if (isSeller) {
+                alert('You cannot bid for your Auctions');
+            } else if (topBidder === parseInt("{{ session['uid'] }}")) {
+                alert('You are the top bidder.');
+            } else {
+                // If the conditions are met, submit the form
+                document.getElementById('bidForm').submit();
             }
-        },
-        error: function (error) {
-            console.log('Error fetching latest bid details:', error);
-        }
+        });
     });
-}
-
-    // Function to fetch bid data from the server and append to the table
-    function getBidHistory() {
-        var bidHistoryTable = $('#bidHistoryTable').find('tbody');
-
-        // Make an AJAX request to fetch bid data
+    // Function to update auction details asynchronously
+    function updateAuctionDetails() {
+        // Make an AJAX request to the server
         $.ajax({
-            url: '/bidHistory/{{ details["Auction_id"] }}',
             type: 'GET',
+            url: '/latestBidDetails/{{ details["Auction_id"] }}',  // Replace with the actual URL to update details
             dataType: 'json',
-            success: function (bidHistory) {
-                // Create a new tbody element with the new data
-                var newTbody = $('<tbody>');
+            success: function(response) {
+                // Update the remaining time
+                if(response.startingTime != "Ended"){
+                    document.getElementById('bid').disabled = true;
+                    document.getElementById('bidnow').disabled = true;
+                    $('#remainingTime').text('Opens in '+formatTime(timeStringToSeconds(response.startingTime)));
+                }else if(response.remainingTime!='Ended'){
+                    $('#remainingTime').text('Closes in '+formatTime(timeStringToSeconds(response.remainingTime)));
+                }
+                if (topBidder === parseInt("{{ session['uid'] }}")) {
+                    document.getElementById('paynow').disabled = false;
+                }
+                // Update bid count
+                if(response.max_bid!=null){
+                    $('#bidCount').text(response.Bid_count+' Bids');
+                }
 
-                // Loop through the bid history data and append rows to the new tbody
-                bidHistory.forEach(function (row) {
-                    var newRow = '<tr><td>' + row['user_name'] + '</td><td>' + row['Bid_amt'] + '</td><td>' + row['Bid_time'] + '</td></tr>';
-                    newTbody.append(newRow);
-                });
-
-                // Replace the existing tbody with the new one
-                bidHistoryTable.html(newTbody.html());
-                topBidder = bidHistory[0]['User_id'];
-                $('#bid').val($('#expectedBidamt').text());
-                $('#bid').prop('min', $('#expectedBidamt').text());
+                // Update current bid
+                if(response.max_bid!=null){
+                    $('#currentBid').text(response.max_bid);
+                }
+                if (currentBidCount !== response['Bid_count']){
+                    currentBidCount = response['Bid_count'];
+                    updateBidHistory();
+                }
+                if (response.remainingTime === 'Ended') {
+                    // Disable the bid form
+                    document.getElementById('bid').disabled = true;
+                    document.getElementById('bidnow').disabled = true;
+                    document.querySelector('.add-to-cart').classList.add('disabled');
+                    if (response.remainingTime === 'Ended' && topBidder === parseInt("{{ session['uid'] }}")) {
+                        document.getElementById('paynow').disabled = false;
+                        document.getElementById('paynow').addEventListener('click', function() { 
+                        window.location.href = '/payment/' + winbidid +'/'+response.expectedBidamt;
+                     });
+                    }
+                }
             },
-            error: function (error) {
-                console.log('Error fetching bid history:', error);
+            error: function(error) {
+                console.error('Error updating auction details:', error);
             }
         });
     }
 
-    updateLatestBidDetails();
+    function updateBidHistory() {
+        // Make an AJAX request to the server
+        var bidHistoryTable = $('#bidHistoryTable');
+        $.ajax({
+            type: 'GET',
+            url: '/bidHistory/{{ details["Auction_id"] }}',
+            dataType: 'json',
+            success: function (bidHistory) {
+            // Clear the entire table
+            bidHistoryTable.empty();
 
-    // Call the function every 5 seconds
-    setInterval(function () {
-        updateLatestBidDetails();
-    }, 1000);
+            // Append the new rows to the tbody
+            bidHistory.forEach(function (row) {
+                var newRow = '<tr><td>' + row['user_name'] + '</td><td>' + row['Bid_amt'] + '</td><td>' + row['Bid_time'] + '</td></tr>';
+                bidHistoryTable.append(newRow);
+            });
+            winbidid = bidHistory[0]['Bid_id']
+            topBidder = bidHistory[0]['User_id'];
+            },
+            error: function(error) {
+                console.error('Error updating bid history:', error);
+            }
+        });
+    }
+    updateBidHistory();
+    updateAuctionDetails();
+    // Call the function periodically (every 1 second in this example)
+    setInterval(updateAuctionDetails, 1000);
 </script>
 
+
+<div class="container">
+    <div class="card">
+        <div class="container-fliud">
+            <div class="wrapper row">
+                <div class="preview col-md-6">
+                    
+                    <div class="preview-pic tab-content flex">
+                      <img src="{{ url_for('static', filename=details['Item_img_path']) }}" />
+                    </div>
+                </div>
+                <div class="details col-md-6 flex">
+                    <h3 class="product-title">{{ details['Auction_text'] }}</h3>
+                    <div class="rating">
+                        <span class="review-no" id="bidCount">No bids</span>
+                    </div>
+                    <p class="product-description">{{ details['Item_desc'] }}</p>
+                    <p class="product-description">MRP:&#8377;{{ details['MRP'] }}</p>
+                    <h4 class="price">current bid: <span id="currentBid">Waiting</span></h4>
+                    <p id="remainingTime">Ended</p>
+
+                    <div class="action">
+                        <form id="bidForm" method="post" action="/addBid/{{ details['Auction_id'] }}">
+                            <input id="bid" type="number" name="bid" value="{{ details['expectedBidamt'] }}" required>
+                            <button id="bidnow" type="submit" class="add-to-cart btn btn-default">BID NOW</button>
+                        </form>
+                        <button id="paynow" class="add-to-cart btn btn-success" disabled>PAY NOW</button>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-3 tab-card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="one-tab" data-bs-toggle="tab" href="#one" role="tab" aria-controls="One" aria-selected="true">Auction Details</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="two-tab" data-bs-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false">Item Details</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="three-tab" data-bs-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false">Bid History</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active p-3" id="one" role="tabpanel" aria-labelledby="one-tab">
+                        <table class="table table-striped table-hover">
+                            <tr>
+                                <td class="fw-bold">Auction Name</td>
+                                <td>{{ details['Auction_text'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Start Date</td>
+                                <td>{{ details['startDate'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">End Date</td>
+                                <td>{{ details['endDate'] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Base Price</td>
+                                <td>{{details['basePrice']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Reserve Price</td>
+                                <td>{{details['reservePrice']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Increment</td>
+                                <td>{{details['bidInc']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Seller ID</td>
+                                <td>{{details['seller_id']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Seller Name</td>
+                                <td>{{details['user_name']}}</td>
+                            </tr>
+                        </table>                            
+                    </div>
+                    <div class="tab-pane fade p-3" id="two" role="tabpanel" aria-labelledby="two-tab">
+                        <table class="table table-striped table-hover">
+                            <tr>
+                                <td class="fw-bold">Item</td>
+                                <td>{{details['Item_Name']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Item Description</td>
+                                <td>{{details['Item_desc']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Maximum Retail Price</td>
+                                <td class="text-danger">{{details['MRP']}}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Category</td>
+                                <td>{{details['category_name']}}</td>
+                            </tr>
+                        </table>                            
+                    </div>
+                    <div class="tab-pane fade p-3" id="three" role="tabpanel" aria-labelledby="three-tab">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>User Name</th>
+                                    <th>Bid Amt</th>
+                                    <th>Bid Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bidHistoryTable">
+                                <!--populate table-->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

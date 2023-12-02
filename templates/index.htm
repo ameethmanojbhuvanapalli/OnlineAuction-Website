@@ -5,17 +5,24 @@
 <style>
 
     .user-functions {
-        background-color: #f5f5f5; /* Added background color */
-        padding: 20px; /* Adjusted padding */
-        height: 100%;
-        width: 20%;
+        background-color: #D3D3D3;
+        padding: 15px;
+        height: 100vh; /* Set height to 100% of viewport height */
+        width: 16%;
+        margin-right: 0;
         border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        margin-left: 0%;
         top: 5%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        overflow: auto;
         position: fixed;
-        overflow-y: auto;
+    }
+
+    .col-lg-3 {
+        grid-column: 1; /* Position the user functions panel in the first column */
+    }
+
+    .col-lg-9 {
+        grid-column: 2; /* Position the content in the second column */
     }
 
     .user-functions::-webkit-scrollbar {
@@ -27,7 +34,7 @@
     }
 
     .list-group {
-        width: 400px !important;
+        width: 100%; /* Adjust width to 100% */
     }
 
     .list-group-item {
@@ -53,85 +60,67 @@
 
     .about span {
         font-size: 12px;
-        margin-right: 10px;
-    }
-     /* Add styles for the card title */
-     .card-title {
-        font-size: 18px;
-        color: #333;
-        margin-bottom: 10px;
+        margin-right: 1px;
     }
 
-    /* Style the badge inside the card */
-    .card .badge {
-        font-size: 14px;
-        padding: 8px 12px;
-    }
-
-    /* Style the card body */
-    .card-body {
-        padding: 10px;
-        margin-top: auto;
-    }
-
-    /* Add styles for the auction information */
-    .closed-info, .upcoming-info, .active-info {
-        font-size: 14px;
-        color: #777;
-    }
-
-    /* Add a horizontal line between title and content */
-    .card-title:after {
-        content: "";
-        display: block;
-        border-bottom: 1px solid #ddd;
-        margin-top: 5px;
-    }
     .custom-card {
-        height: 300px;
+        height: 350px;
         border-bottom: 1px solid #ddd;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
+        background-color: #D3D3D3;
     }
-</style>
+    .container-fluid {
+    margin-top: 3px;
+    padding-left: 0;
+    padding-right: 0;
+    display: grid; /* Adjust the column sizes as needed */
+    grid-column-gap: 10px;
+}
+.category-card{
+    height: 300px;
+}
 
+.heading{
+    color: #D3D3D3;
+}
+
+
+</style>
 <div class="container-fluid">
     <div class="row">
         <!-- Left section for user functions -->
         <div class="col-lg-3">
             {% if 'uid' in session %}
-                <div class="container d-flex justify-content-center user-functions bg-light">
-                    <ul class="list-group mt-5 text-white">
-                        <h4 class="text-center mb-4 text-dark">User Functions</h4>
-                        {% for func in functions %}
-                            <li class="list-group-item d-flex justify-content-between align-content-center">
-                                <a class="text-decoration-none" href="/{{ func.Function_url }}">
-                                    <div class="d-flex flex-row">
-                                        <div class="ml-2">
-                                            <h6 class="mb-0 text-light">{{ func.Function_name }}</h6>
-                                        </div>
+            <div class="container d-flex justify-content-center user-functions">
+                <ul class="list-group mt-5 text-white">
+                    <h4 class="text-center mb-4 text-dark">User Functions</h4>
+                    {% for func in functions %}
+                        <li class="list-group-item d-flex justify-content-between align-content-center">
+                            <a class="text-decoration-none" href="{{ func.Function_url }}">
+                                <div class="d-flex flex-row">
+                                    <div class="ml-2">
+                                        <h6 class="mb-0 heading">{{ func.Function_name }}</h6>
                                     </div>
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                                </div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
             {% endif %}
         </div>
 
         <!-- Right section for categories and top auctions -->
         <div class="col-lg-9">
             <div class="row">
+                <div style="margin-bottom: 60px;"></div>
                 <div class="col-lg-12">
                     <div class="text-center container mt-4 mb-4">
-                        <h4 class="mt-4 mb-5 text-light"><strong>Categories</strong></h4>
-                    </div>
-                </div>
-                <div class="col-lg-12">
-                    <div class="text-center container mt-4 mb-4">
-                        <h4 class="mt-4 mb-5 text-light"><strong>==Categories==</strong></h4>
+                        <h3 class="mt-4 mb-5 heading"><strong>==Categories==</strong></h3>
                     </div>
                 </div>
                 {% for row in categories %}
@@ -151,7 +140,7 @@
 
             <!-- Top Auctions Section -->
             <div class="text-center container mt-4 mb-4">
-                <h4 class="mt-4 mb-5 text-light"><strong>==Top Auctions==</strong></h4>
+                <h3 class="mt-4 mb-5 heading"><strong>==Top Auctions==</strong></h3>
                 {% set ns = namespace(current_status = 0) %}
                 <div class="text-center container mt-4 mb-4">
                     {% for row in auctionData %}
@@ -159,7 +148,7 @@
                     {% if ns.current_status != 0 %}
                 </div>
                 {% endif %}
-                <h5 class="text-light"><strong>{{ row['StatusDef_text'] }}</strong></h5>
+                <h5 class="heading"><strong>{{ row['StatusDef_text'] }}</strong></h5>
                 <div class="row">
                     {% set ns.current_status = row['Auction_status'] %}
                     {% endif %}
@@ -170,9 +159,9 @@
                                     src="{{ url_for('static', filename=row['Item_img_path']) }}" class="w-100" />
                                 <div class="mask">
                                     <div class="d-flex justify-content-start align-items-end h-100">
-                                        <h5><span
+                                        <h4><span
                                                 class="badge ms-2 {% if row['StatusDef_text'].lower() == 'closed' %}bg-danger{% elif row['StatusDef_text'].lower() == 'upcoming' %}bg-warning{% elif row['StatusDef_text'].lower() == 'active' %}bg-success{% endif %}">{{
-                                                row['StatusDef_text'] }}</span></h5>
+                                                row['StatusDef_text'] }}</span></h4>
                                     </div>
                                 </div>
                                 <div class="card-body" id="{{ row['Auction_id'] }}_body">

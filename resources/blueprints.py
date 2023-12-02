@@ -110,8 +110,10 @@ def latestBidDetails(aid):
 def addBid(aid):
     db_cursor = current_app.config['DB_CURSOR']
     bidamt = float(request.form['bid'])
+    '''
     db_cursor.execute("{CALL SP_addBid(?,?,?)}",(session['uid'],aid,bidamt))
     db_cursor.commit()
+    '''
     return redirect(url_for('auctionDetails.auctionDetails', aid=aid))
 
 myAuctions_bp=Blueprint('myAuctions',__name__)
@@ -204,8 +206,8 @@ def get_bid_data(auctionId):
 
 payment_bp = Blueprint('payment',__name__)
 
-@payment_bp.route('/payment/<int:bidid>',methods=['GET', 'POST'])
-def payment(bidid):
+@payment_bp.route('/payment/<int:bidid>/<string:amt>',methods=['GET', 'POST'])
+def payment(bidid,amt):
     F.referral()
     db_cursor = current_app.config['DB_CURSOR']
     userid=session.get('uid',None)
@@ -223,4 +225,4 @@ def payment(bidid):
         except Exception as e:
             db_cursor.rollback()
             return f'Error creating auction: {str(e)}'
-    return render_template('payment.htm',paymentMode=paymentMode,billingInfo=billingInfo,bidid=bidid)
+    return render_template('payment.htm',paymentMode=paymentMode,billingInfo=billingInfo,bidid=bidid,amt=amt.split('.'))
