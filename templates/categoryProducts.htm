@@ -124,8 +124,8 @@
     <div class="row">
         <!-- Left section for user functions -->
         <div class="col-lg-3">
-            {% if 'uid' in session %}
             <div class="container d-flex justify-content-center user-functions">
+                {% if 'uid' in session %}
                 <ul class="list-group mt-5 text-white">
                     <h4 class="text-center mb-4 text-dark">User Functions</h4>
                     {% for func in functions %}
@@ -140,9 +140,21 @@
                     </li>
                     {% endfor %}
                 </ul>
+                {% else %}
+                <ul class="list-group mt-5 text-white">
+                    <h4 class="text-center mb-4 text-dark">User Functions</h4>
+                    <li class="list-group-item d-flex justify-content-between align-content-center">
+                        <a class="text-decoration-none" href="/login">
+                            <div class="d-flex flex-row">
+                                <div class="ml-2">
+                                    <h6 class="mb-0 heading">Login to get Functions</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                {% endif %}
             </div>
-
-            {% endif %}
         </div>
 
         <!-- Right section for categories and top auctions -->
