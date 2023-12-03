@@ -135,7 +135,7 @@
                             <img src="{{ url_for('static', filename=row['img_path']) }}" class="w-100" />
                             <div class="card-body text-center">
                                 <h5 class="card-title">{{ row['category_name'] }}</h5>
-                                <a class="btn btn-outline-primary btn-sm" href="" data-abc="true">View Products</a>
+                                <a class="btn btn-outline-primary btn-sm" href="/category/{{ row['category_id'] }}" data-abc="true">View Products</a>
                             </div>
                         </a>
                     </div>

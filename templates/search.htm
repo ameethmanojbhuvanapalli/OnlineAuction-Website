@@ -148,7 +148,7 @@
         <!-- Right section for categories and top auctions -->
         <div class="col-lg-9">
             <div class="row">
-                <div style="margin-bottom: 60px;"></div>
+                <div style="margin-bottom: 40px;"></div>
             </div>
 
             <!-- Top Auctions Section -->
@@ -160,7 +160,8 @@
                     {% if ns.current_status != 0 %}
                 </div>
                 {% endif %}
-                <h5 class="heading"><strong>{{ row['StatusDef_text'] }}</strong></h5>
+                <h4 class="heading"><strong>{{ row['StatusDef_text'] }}</strong></h4>
+                <div style="margin-bottom: 20px;"></div>
                 <div class="row">
                     {% set ns.current_status = row['Auction_status'] %}
                     {% endif %}

@@ -24,3 +24,7 @@ def getStatusDefinitionswithGrp(db_cursor,grp):
 def searchAuctions(db_cursor,text):
     db_cursor.execute("{CALL SP_searchByAuctionText(?)}",(text))
     return db_cursor.fetchall()
+
+def getCategoryAuctions(db_cursor,catid):
+    db_cursor.execute("{CALL SP_searchBycategoryid(?)}",(catid))
+    return db_cursor.fetchall()

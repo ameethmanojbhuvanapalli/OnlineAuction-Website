@@ -55,9 +55,16 @@ def search(auctionText):
         auctionText=auctionText,
         auctionData=F.searchAuctions(app.config['DB_CURSOR'], auctionText),
         functions=F.getRoleFunctions(app.config['DB_CURSOR'], role_id),
-        categories=F.categoryDetails(app.config['DB_CURSOR'], 0)
     )
 
+@app.route('/category/<int:catid>')
+def category(catid):
+    return render_template(
+        "categoryProducts.htm",
+        category=F.categoryDetails(app.config['DB_CURSOR'], catid),
+        auctionData=F.getCategoryAuctions(app.config['DB_CURSOR'], catid),
+        functions=F.getRoleFunctions(app.config['DB_CURSOR'], role_id),
+    )
 
 
 

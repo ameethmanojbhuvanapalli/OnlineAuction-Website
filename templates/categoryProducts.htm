@@ -1,0 +1,244 @@
+{% extends "base.htm" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="static/styles.css">
+<style>
+    .user-functions {
+        background-color: #D3D3D3;
+        padding: 15px;
+        height: 100%;
+        width: 16%;
+        margin-right: 0;
+        border-radius: 8px;
+        top: 5%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        overflow: auto;
+        position: fixed;
+    }
+
+    .col-lg-3 {
+        grid-column: 1;
+        /* Position the user functions panel in the first column */
+    }
+
+    .col-lg-9 {
+        grid-column: 2;
+        /* Position the content in the second column */
+    }
+
+    .user-functions::-webkit-scrollbar {
+        width: 0.5em;
+    }
+
+    .user-functions::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
+
+    .list-group {
+        width: 100%;
+        /* Adjust width to 100% */
+    }
+
+    .list-group-item {
+        margin-top: 10px;
+        border-radius: none;
+        background: darkcyan;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .list-group-item:hover {
+        transform: scaleX(1.1);
+    }
+
+    .check {
+        opacity: 0;
+        transition: all 0.6s ease-in-out;
+    }
+
+    .list-group-item:hover .check {
+        opacity: 1;
+    }
+
+    .about span {
+        font-size: 12px;
+        margin-right: 1px;
+    }
+
+    .custom-card {
+        height: 350px;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        background-color: #D3D3D3;
+        position: relative;
+        overflow: hidden;
+    }
+    .custom-card img {
+    object-fit: cover;
+    height: 200px;
+}
+
+.card-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.custom-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+}
+
+.btn-group-sm > .btn,
+.btn-sm {
+    padding: .45rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+}
+
+    .container-fluid {
+        margin-top: 3px;
+        padding-left: 0;
+        padding-right: 0;
+        display: grid;
+        /* Adjust the column sizes as needed */
+        grid-column-gap: 10px;
+    }
+
+    .category-card {
+        height: 300px;
+    }
+
+    .heading {
+        color: #D3D3D3;
+    }
+</style>
+<div style="margin-bottom: 60px;"></div>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left section for user functions -->
+        <div class="col-lg-3">
+            {% if 'uid' in session %}
+            <div class="container d-flex justify-content-center user-functions">
+                <ul class="list-group mt-5 text-white">
+                    <h4 class="text-center mb-4 text-dark">User Functions</h4>
+                    {% for func in functions %}
+                    <li class="list-group-item d-flex justify-content-between align-content-center">
+                        <a class="text-decoration-none" href="{{ func.Function_url }}">
+                            <div class="d-flex flex-row">
+                                <div class="ml-2">
+                                    <h6 class="mb-0 heading">{{ func.Function_name }}</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% endif %}
+        </div>
+
+        <!-- Right section for categories and top auctions -->
+        <div class="col-lg-9">
+            <div class="row">
+                <div style="margin-bottom: 40px;"></div>
+            </div>
+            <!-- Top Auctions Section -->
+            <div class="text-center container mt-4 mb-4">
+                <h3 class="heading"><strong>{{ category[0]['category_name'] }}</strong></h3>
+                <div style="margin-bottom: 40px;"></div>
+                {% set ns = namespace(current_status = 0) %}
+                <div class="text-center container mt-4 mb-4">
+                    {% for row in auctionData %}
+                    {% if ns.current_status != row['Auction_status'] %}
+                    {% if ns.current_status != 0 %}
+                </div>
+                {% endif %}
+                <h5 class="heading"><strong>{{ row['StatusDef_text'] }}</strong></h5>
+                <div class="row">
+                    {% set ns.current_status = row['Auction_status'] %}
+                    {% endif %}
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="card custom-card">
+                            <a href="/auctionDetails/{{ row['Auction_id'] }}" class="text-reset text-decoration-none">
+                                <img id="{{ row['Auction_id'] }}_image"
+                                    src="{{ url_for('static', filename=row['Item_img_path']) }}" class="w-100" />
+                                <div class="mask">
+                                    <div class="d-flex justify-content-start align-items-end h-100">
+                                        <h4><span
+                                                class="badge ms-2 {% if row['StatusDef_text'].lower() == 'closed' %}bg-danger{% elif row['StatusDef_text'].lower() == 'upcoming' %}bg-warning{% elif row['StatusDef_text'].lower() == 'active' %}bg-success{% endif %}">{{
+                                                row['StatusDef_text'] }}</span></h4>
+                                    </div>
+                                </div>
+                                <div class="card-body" id="{{ row['Auction_id'] }}_body">
+                                    <h5 class="card-title mb-3 text-primary fw-bold" id="{{ row['Auction_id'] }}_title">
+                                        {{
+                                        row['Auction_text'] }}</h5>
+                                    <div class="{{ row['StatusDef_text'].lower() }}-info"></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function refreshAuctions() {
+        // Make an AJAX request to the server
+        $.ajax({
+            type: 'GET',
+            url: '/get_updated_auctions',
+            dataType: 'json',
+            success: function (data) {
+                // Assuming the server responds with a JSON array of updated auction data
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i];
+
+                    // Update values by ID
+                    $(`#${row['Auction_id']}_status`).text(row['StatusDef_text']);
+                    $(`#${row['Auction_id']}_image`).attr('src', `/static/${row['Item_img_path']}`);
+                    var titleElement = $(`#${row['Auction_id']}_title`);
+                    titleElement.text(row['Auction_text']);
+
+                    // Update specific content in card body based on auction status
+                    var cardBody = $(`#${row['Auction_id']}_body`);
+                    if (row['StatusDef_text'] == 'Closed') {
+                        cardBody.find('.closed-info').html(`<p><strong>Ended:</strong> &#8377;${row['Bid_amt']}</p>`);
+                    } else if (row['StatusDef_text'] == 'Upcoming') {
+                        cardBody.find('.upcoming-info').html(`<p><strong>Opens in </strong> ${formatTime(timeStringToSeconds(row['openingTime']))}</p>`);
+                    } else {
+                        if(row['Bid_amt']!==null){
+                        cardBody.find('.active-info').html(
+                            `<p><strong>Closes in </strong>  ${formatTime(timeStringToSeconds(row['remainingTime']))}</p>` +
+                            `<p><strong>Current Bid </strong> &#8377;${row['Bid_amt']}</p>`
+                        );
+                        } else{
+                            cardBody.find('.active-info').html(
+                            `<p><strong>Closes in </strong>  ${formatTime(timeStringToSeconds(row['remainingTime']))}</p>` +
+                            `<p><strong>No Bids </strong></p>`
+                        );
+                        }
+                    }
+                }
+            },
+            error: function (error) {
+                console.error('Error fetching updated auctions:', error);
+            }
+        });
+    }
+    refreshAuctions();
+
+    setInterval(refreshAuctions, 1000);
+</script>
+{% endblock %}
