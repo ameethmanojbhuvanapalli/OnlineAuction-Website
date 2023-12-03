@@ -48,6 +48,16 @@ def get_updated_auctions():
 
     return jsonify(auctions_as_dicts)
 
+@app.route('/search/<string:auctionText>')
+def search(auctionText):
+    return render_template(
+        "search.htm",
+        auctionText=auctionText,
+        auctionData=F.searchAuctions(app.config['DB_CURSOR'], auctionText),
+        functions=F.getRoleFunctions(app.config['DB_CURSOR'], role_id),
+        categories=F.categoryDetails(app.config['DB_CURSOR'], 0)
+    )
+
 
 
 

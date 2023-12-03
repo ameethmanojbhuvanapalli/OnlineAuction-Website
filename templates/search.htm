@@ -1,14 +1,12 @@
 {% extends "base.htm" %}
 
 {% block content %}
-
-
+<link rel="stylesheet" type="text/css" href="static/styles.css">
 <style>
     .user-functions {
         background-color: #D3D3D3;
         padding: 15px;
-        height: 100vh;
-        /* Set height to 100% of viewport height */
+        height: 100%;
         width: 16%;
         margin-right: 0;
         border-radius: 8px;
@@ -75,7 +73,34 @@
         flex-direction: column;
         justify-content: flex-end;
         background-color: #D3D3D3;
+        position: relative;
+        overflow: hidden;
     }
+    .custom-card img {
+    object-fit: cover;
+    height: 200px;
+}
+
+.card-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.custom-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+}
+
+.btn-group-sm > .btn,
+.btn-sm {
+    padding: .45rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+}
 
     .container-fluid {
         margin-top: 3px;
@@ -94,6 +119,7 @@
         color: #D3D3D3;
     }
 </style>
+<div style="margin-bottom: 60px;"></div>
 <div class="container-fluid">
     <div class="row">
         <!-- Left section for user functions -->
@@ -123,29 +149,10 @@
         <div class="col-lg-9">
             <div class="row">
                 <div style="margin-bottom: 60px;"></div>
-                <div class="col-lg-12">
-                    <div class="text-center container mt-4 mb-4">
-                        <h3 class="mt-4 mb-5 heading"><strong>==Categories==</strong></h3>
-                    </div>
-                </div>
-                {% for row in categories %}
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card custom-card category-card">
-                        <a href="" class="text-reset text-decoration-none">
-                            <img src="{{ url_for('static', filename=row['img_path']) }}" class="w-100" />
-                            <div class="card-body text-center">
-                                <h5 class="card-title">{{ row['category_name'] }}</h5>
-                                <a class="btn btn-outline-primary btn-sm" href="" data-abc="true">View Products</a>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                {% endfor %}
             </div>
 
             <!-- Top Auctions Section -->
             <div class="text-center container mt-4 mb-4">
-                <h3 class="mt-4 mb-5 heading"><strong>==Top Auctions==</strong></h3>
                 {% set ns = namespace(current_status = 0) %}
                 <div class="text-center container mt-4 mb-4">
                     {% for row in auctionData %}
@@ -186,6 +193,16 @@
 </div>
 
 <script>
+    function updatePlaceholder() {
+        // Get the input element by ID
+        var inputElement = document.getElementById('searchInput');
+
+        // Get the new placeholder value (you can replace this with your dynamic content)
+        var newPlaceholder = "{{ auctionText }}";
+
+        // Update the placeholder attribute
+        inputElement.placeholder = newPlaceholder;
+    }
     function refreshAuctions() {
         // Make an AJAX request to the server
         $.ajax({
@@ -229,7 +246,7 @@
             }
         });
     }
-
+    updatePlaceholder();
     refreshAuctions();
 
     setInterval(refreshAuctions, 1000);

@@ -110,10 +110,9 @@ def latestBidDetails(aid):
 def addBid(aid):
     db_cursor = current_app.config['DB_CURSOR']
     bidamt = float(request.form['bid'])
-    '''
     db_cursor.execute("{CALL SP_addBid(?,?,?)}",(session['uid'],aid,bidamt))
     db_cursor.commit()
-    '''
+
     return redirect(url_for('auctionDetails.auctionDetails', aid=aid))
 
 myAuctions_bp=Blueprint('myAuctions',__name__)
@@ -217,10 +216,8 @@ def payment(bidid,amt):
     if request.method == 'POST':
         try:
             mode=int(request.form['paymentMethod'])
-            '''
             db_cursor.execute("{CALL SP_addAuctionPayment(?,?)}", (bidid,mode))
             db_cursor.commit()
-            '''
             return render_template('paydone.htm')
         except Exception as e:
             db_cursor.rollback()

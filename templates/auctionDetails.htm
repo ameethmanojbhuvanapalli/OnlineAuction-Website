@@ -154,6 +154,11 @@ width: 550px; }
             dataType: 'json',
             success: function(response) {
                 // Update the remaining time
+                var bidInput = document.getElementById('bid');
+                if (bidInput) {
+                    bidInput.min = response.expectedBidamt;
+                }
+                document.getElementById('paynow').disabled = false;
                 if(response.startingTime != "Ended"){
                     document.getElementById('bid').disabled = true;
                     document.getElementById('bidnow').disabled = true;
@@ -161,14 +166,13 @@ width: 550px; }
                 }else if(response.remainingTime!='Ended'){
                     $('#remainingTime').text('Closes in '+formatTime(timeStringToSeconds(response.remainingTime)));
                 }
-                if (topBidder === parseInt("{{ session['uid'] }}")) {
-                    document.getElementById('paynow').disabled = false;
+                if (topBidder === parseInt("{{ session['uid'] }}") && response.remainingTime === 'Ended') {
+                    document.getElementById('paynow').hidden = false;
                 }
                 // Update bid count
                 if(response.max_bid!=null){
                     $('#bidCount').text(response.Bid_count+' Bids');
                 }
-
                 // Update current bid
                 if(response.max_bid!=null){
                     $('#currentBid').text(response.max_bid);
@@ -205,6 +209,7 @@ width: 550px; }
             dataType: 'json',
             success: function (bidHistory) {
             // Clear the entire table
+            if (bidHistory !== null && bidHistory !== undefined) {
             bidHistoryTable.empty();
 
             // Append the new rows to the tbody
@@ -214,6 +219,7 @@ width: 550px; }
             });
             winbidid = bidHistory[0]['Bid_id']
             topBidder = bidHistory[0]['User_id'];
+        }
             },
             error: function(error) {
                 console.error('Error updating bid history:', error);
@@ -249,10 +255,10 @@ width: 550px; }
 
                     <div class="action">
                         <form id="bidForm" method="post" action="/addBid/{{ details['Auction_id'] }}">
-                            <input id="bid" type="number" name="bid" value="{{ details['expectedBidamt'] }}" required>
+                            <input id="bid" type="number" name="bid" required min="{{ details['expectedBidamt'] }}">
                             <button id="bidnow" type="submit" class="add-to-cart btn btn-default">BID NOW</button>
                         </form>
-                        <button id="paynow" class="add-to-cart btn btn-success" disabled>PAY NOW</button>
+                        <button id="paynow" class="add-to-cart btn btn-success" hidden>PAY NOW</button>
                     </div>                    
                 </div>
             </div>

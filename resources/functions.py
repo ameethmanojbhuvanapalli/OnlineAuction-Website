@@ -20,3 +20,7 @@ def categoryDetails(db_cursor,catid):
 def getStatusDefinitionswithGrp(db_cursor,grp):
     db_cursor.execute("{CALL SP_getStatusDefinitionsWithGrp(?)}",(grp))
     return db_cursor.fetchall()
+
+def searchAuctions(db_cursor,text):
+    db_cursor.execute("{CALL SP_searchByAuctionText(?)}",(text))
+    return db_cursor.fetchall()
