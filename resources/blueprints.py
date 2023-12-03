@@ -9,14 +9,16 @@ from werkzeug.utils import secure_filename
 
 login_bp = Blueprint('login', __name__)
 
-@login_bp.route('/login', methods=['GET', 'POST'])
+@login_bp.route('/login', methods=['POST'])
 def login():
     if request.referrer != urljoin(request.url_root, url_for('login.login')):
         F.referral()
+
     if 'uid' in session:
         return redirect(session['url'])
     
     db_cursor = current_app.config['DB_CURSOR']
+
     if request.method == 'POST':
         loginID = request.form['email']
         password = request.form['password']
@@ -27,22 +29,24 @@ def login():
 
             if result:
                 user_id, user_name, role_id, role_name = result
-                session['uid']=user_id
-                session['uname']=user_name
-                session['role_id']=role_id
+                session['uid'] = user_id
+                session['uname'] = user_name
+                session['role_id'] = role_id
                 return redirect(session['url'])
             else:
-                flash('Login failed. Please try again.', 'error')
+                flash('Login failed. Invalid credentials.', 'login_error')  # Add this line for the flash message
         except pyodbc.Error as e:
             print(f"Error calling the stored procedure: {e}")
 
-    return render_template('login.htm')
+    return redirect(session['url'])
+
 
 register_bp = Blueprint('register', __name__)
 
-@register_bp.route('/register', methods=['GET', 'POST'])
+@register_bp.route('/register', methods=['POST'])
 def register():
 
+    F.referral()
     if 'uid' in session:
         return redirect(url_for('home'))
     
@@ -51,24 +55,25 @@ def register():
         # Get user registration data from the form
         usr_name = request.form['usr_name']
         email = request.form['email']
-        DOB = request.form['DOB']
+        DOB = request.form['dob']
         phno = request.form['phno']
         house_no = request.form['house_no']
         street = request.form['street']
         city = request.form['city']
         pin_code = request.form['pin_code']
         pwd = request.form['pwd']
-
+        
         try:
+            '''
             db_cursor.execute("{CALL SP_registerUser(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}",
                              (usr_name, email, DOB, phno, house_no, street, city, pin_code, pwd, 1003))
             db_cursor.commit()
+            '''
+            return redirect(session['url'])
+        except pyodbc.Error as e: 
+            flash(f"Error registering user: {e}", 'registration_error')
 
-            return redirect(url_for('login.login'))
-        except pyodbc.Error as e:
-            print(f"Error calling the stored procedure: {e}")
-
-    return render_template('register.htm')
+    return redirect(session['url'])
 
 logout_bp = Blueprint('logout', __name__)
 

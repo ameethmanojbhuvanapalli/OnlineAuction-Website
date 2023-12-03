@@ -1,107 +1,321 @@
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-        <title>{% block title %}Online Auction{% endblock %}</title>
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="{{ url_for('static', filename='functions.js') }}"></script>
-    </head>
-    <body>
-        <style>
-            .modal-content {
-  width: 80%;
-  margin: 0 auto;
-}
-.modal-body {
-  padding: 0;
-}
-.btn-close {
-  position: absolute;
-  right: 0;
-  padding: 1em;
-}
-h1 {
-  font-size: 2.3em;
-  font-weight: bold;
-}
-.myform {
-  padding: 2em;
-  max-width: 100%;
-  color: #fff;
-  box-shadow: 0 4px 6px 0 rgba(22, 22, 26, 0.18);
-}
-@media (max-width: 576px) {
-  .myform {
-    max-width: 90%;
-    margin: 0 auto;
-  }
-}
-.form-control:focus {
-  box-shadow: inset 0 -1px 0 #7e7e7e;
-}
-.form-control {
-  background-color: inherit;
-  color: #fff;
-  padding-left: 0;
-  border: 0;
-  border-radius: 0;
-  border-bottom: 1px solid #fff;
-}
-.myform .btn {
-  width: 100%;
-  font-weight: 800;
-  background-color: #fff;
-  border-radius: 0;
-  padding: 0.5em 0;
-}
-.myform .btn:hover {
-  background-color: inherit;
-  color: #fff;
-  border-color: #fff;
-}
-p {
-  text-align: center;
-  padding-top: 2em;
-  color: grey;
-}
-p a {
-  color: #e1e1e1;
-  text-decoration: none;
-}
-p a:hover {
-  color: #fff;
-}
-        </style>
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <title>{% block title %}Online Auction{% endblock %}</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='functions.js') }}"></script>
+</head>
 
-        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#ModalForm">
-    Launch Modal Form
+<body>
+
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    Launch demo modal
   </button>
-<div class="modal fade" id="ModalForm" tabindex="-1" aria-labelledby="ModalFormLabel" aria-hidden="true">
+
+  <style>
+    .form-control {
+      border-bottom: 2px solid #eee !important;
+      border: none;
+      font-weight: 600
+    }
+
+    .form-control:focus {
+      color: #495057;
+      background-color: #D3D3D3;
+      outline: 0;
+      box-shadow: none;
+      border-radius: 0px;
+      border-bottom: 2px solid darkcyan !important;
+    }
+
+    .inputbox {
+      position: relative;
+      margin-bottom: 20px;
+      width: 100%
+    }
+
+    .inputbox span {
+      position: absolute;
+      top: 7px;
+      left: 11px;
+      transition: 0.5s
+    }
+
+    .inputbox i {
+      position: absolute;
+      top: 13px;
+      right: 8px;
+      transition: 0.5s;
+      color: darkcyan
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0
+    }
+
+    .inputbox input:focus~span {
+      transform: translateX(-0px) translateY(-15px);
+      font-size: 12px
+    }
+
+    .inputbox input:valid~span {
+      transform: translateX(-0px) translateY(-15px);
+      font-size: 12px
+    }
+
+    .darkcyan {
+      color: darkcyan;
+    }
+
+    #myTabs .nav-tabs {
+      background-color: #006666;
+      /* Change to the background color you want for inactive tabs */
+    }
+
+    #myTabs .nav-link {
+      flex: 1;
+      text-align: center;
+      color: white;
+      /* Text color for inactive tabs */
+      background-color: darkcyan;
+      font-weight: bold;
+      /* Optional: Adjust font weight as needed */
+    }
+
+    #myTabs .nav-link.active {
+      background-color: white;
+      /* Active tab background color */
+      color: darkcyan;
+      /* Text color for active tab */
+    }
+
+    #myTabs .nav-link {
+      flex: 1;
+      text-align: center;
+    }
+
+    #myTabs .tab-content {
+      border: 1px solid black;
+      /* Adjust the color as needed */
+      border-top: none;
+      /* Remove top border to avoid duplication with the tab borders */
+      padding-top: 10px;
+      /* Optional: Adjust the padding for spacing */
+    }
+
+    /* Move the close button outside the top of the modal */
+    .closebtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1050;
+      /* Make sure it's above the modal backdrop */
+    }
+  </style>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" tabindex="-1" aria-labelledby="staticBackdropLabel"
+    data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-body">
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            <div class="myform bg-dark">
-                <h1 class="text-center">Login Form</h1>
-                <form>
-                    <div class="mb-3 mt-4">
-                        <label for="exampleInputEmail1" class="form-label">Email address</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs" id="myTabs">
+          <li class="nav-item flex-fill">
+            <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login-form">Login</a>
+          </li>
+          <li class="nav-item flex-fill">
+            <a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register-form">Register</a>
+          </li>
+        </ul>
+
+        <!-- Close button -->
+        <div class="closebtn">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+          <!-- Login Tab -->
+          <div class="tab-pane fade show active" id="login-form">
+            <form action="/login" method="post">
+              <!-- Login Input Fields -->
+              <div class="modal-body">
+                <!-- Add this code to display flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="alert alert-danger">
+                  {% for category, message in messages %}
+                  {{ message }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="inputbox mt-3 mr-2">
+                      <input type="text" id="email" name="email" class="form-control" required
+                        placeholder="Email or Phone Number">
                     </div>
-                    <div class="mb-3">
-                        <label for="exampleInputPassword1" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="exampleInputPassword1">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="inputbox mt-3 mr-2">
+                      <input type="password" id="password" name="password" class="form-control" required
+                        placeholder="Password">
                     </div>
-                    <button type="submit" class="btn btn-light mt-3">LOGIN</button>
-                    <p>Not a member? <a href="#">Signup now</a></p>
-                </form>
-            </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer d-flex justify-content-between">
+                <span>Don't have an account?<a href="#register-form" class="text-decoration-none" data-bs-toggle="tab"
+                    id="register-link" style="color: darkcyan;">Register</a></span>
+                <button type="submit" class="btn btn-primary" style="background-color: darkcyan;">Login</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Registration Tab -->
+<div class="tab-pane fade" id="register-form">
+  <form action="/register" method="post">
+    <!-- Registration Input Fields -->
+    <div class="modal-body">
+      <!-- Display flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="alert alert-danger">
+            {% for category, message in messages %}
+              {{ message }}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <!-- User Details -->
+      <div class="row">
+        <h5 style="color: darkcyan;">User Details</h5>
+        <div class="col-md-6">
+          <!-- Username -->
+          <div class="inputbox mt-3 mr-2">
+            <input type="text" id="usr_name" name="usr_name" class="form-control" required placeholder="Username">
+          </div>
+          <!-- Email -->
+          <div class="inputbox mt-3 mr-2">
+            <input type="email" id="email" name="email" class="form-control" required
+                   placeholder="Email" title="Please enter a valid email address">
+          </div>          
+        </div>
+        <div class="col-md-6">
+          <!-- Date of Birth (accepts only dates) -->
+          <div class="inputbox mt-3 mr-2">
+            <input type="text" id="dob" name="dob" class="form-control" required placeholder="Date of Birth"
+                   pattern="\d{2}-\d{2}-\d{4}" title="Please enter a date in the format dd-mm-yyyy">
+          </div>          
+          <!-- Phone Number (accepts only 10 digits) -->
+          <div class="inputbox mt-3 mr-2">
+            <input type="tel" id="phno" name="phno" class="form-control" pattern="[0-9]{10}" required placeholder="Phone Number"
+            title="PH No: XXXXXXXXXX">
+          </div>
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div class="row">
+        <h5 style="color: darkcyan;">Address</h5>
+        <div class="col-md-6">
+          <!-- House Number -->
+          <div class="inputbox mt-3 mr-2">
+            <input type="text" id="house_no" name="house_no" class="form-control" required placeholder="House Number">
+          </div>
+          <!-- Street -->
+          <div class="inputbox mt-3 mr-2">
+            <input type="text" id="street" name="street" class="form-control" required placeholder="Street">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <!-- City -->
+          <div class="inputbox mt-3 mr-2">
+            <input type="text" id="city" name="city" class="form-control" required placeholder="City">
+          </div>
+          <!-- PIN Code (accepts only 6 digits) -->
+          <div class="inputbox mt-3 mr-2">
+            <input type="text" id="pin_code" name="pin_code" class="form-control" pattern="[0-9]{6}" required placeholder="PIN Code"
+            title="PIN CODE: XXXXXX">
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="row">
+        <h5 style="color: darkcyan;">Password</h5>
+        <div class="col-md-12">
+          <div class="inputbox mt-3 mr-2">
+            <input type="password" id="pwd" name="pwd" class="form-control" required placeholder="Password">
+          </div>
         </div>
       </div>
     </div>
+    <div class="modal-footer d-flex justify-content-between">
+      <span>Already have an account?<a href="#login-form" class="text-decoration-none" data-bs-toggle="tab"
+          id="login-link" style="color: darkcyan;">Login</a></span>
+      <button type="submit" class="btn btn-primary" style="background-color: darkcyan;">Register</button>
+    </div>
+  </form>
 </div>
-    </body>
+
+
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+
+      if ($('.modal-body').find('.alert-danger').length > 0) {
+        // If error message is present, open the modal
+        $('#staticBackdrop').modal('show');
+      }
+
+      // Handle tab switching when clicking on the "Register" link inside the "Login" tab
+      $('#register-link').on('click', function (e) {
+        e.preventDefault();
+        $('#register-tab').tab('show');
+      });
+
+      // Handle tab switching when clicking on the "Login" link inside the "Register" tab
+      $('#login-link').on('click', function (e) {
+        e.preventDefault();
+        $('#login-tab').tab('show');
+      });
+
+      // Handle tab switching when tabs are shown
+      $('#myTabs a').on('shown.bs.tab', function (e) {
+        window.location.hash = e.target.hash;
+      });
+
+      // Set the active tab based on the URL hash
+      var hash = window.location.hash;
+      $('#myTabs a[href="' + hash + '"]').tab('show');
+    });
+  </script>
+
+
+
+
+
+</body>
+
 </html>
