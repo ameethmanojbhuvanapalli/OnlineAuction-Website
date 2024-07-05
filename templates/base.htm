@@ -149,12 +149,96 @@
             z-index: 1050;
             /* Make sure it's above the modal backdrop */
         }
+
+        /* Toggle Styles */
+        #wrapper {
+            padding-left: 0;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled {
+            padding-left: 250px;
+        }
+
+        #sidebar-wrapper {
+            z-index: 1000;
+            position: fixed;
+            left: 250px;
+            width: 0;
+            height: 100%;
+            margin-left: -250px;
+            overflow-y: auto;
+            background: #000;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            width: 250px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            position: absolute;
+            margin-right: -250px;
+        }
+
+        /* Sidebar Styles */
+        .sidebar-nav {
+            position: absolute;
+            top: 0;
+            width: 250px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .sidebar-nav > .sidebar-brand {
+            height: 65px;
+            font-size: 18px;
+            line-height: 60px;
+        }
+
+        .sidebar-nav > .sidebar-brand a {
+            color: #999999;
+        }
+
+        .sidebar-nav > .sidebar-brand a:hover {
+            color: #fff;
+            background: none;
+        }
+
+        @media(min-width:768px) {
+            #wrapper {
+                padding-left: 250px;
+            }
+
+            #wrapper.toggled {
+                padding-left: 0;
+            }
+
+            #sidebar-wrapper {
+                width: 250px;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                width: 0;
+            }
+        }
+
     </style>
 </head>
 
 <body>
     <script>
         $(document).ready(function () {
+            $("#toggleSidebar").click(function () {
+            $("#wrapper").toggleClass("toggled");
+        });
             // Update form action on input change
             $('#searchInput').on('input', function () {
                 var searchContent = $(this).val();
@@ -188,6 +272,32 @@
             $('#myTabs a[href="' + hash + '"]').tab('show');
         });
     </script>
+
+<div id="wrapper" class="toggled">
+
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+      <div class="container mt-4 text-light">
+        <div style="margin-bottom: 100px;"></div>
+        <div class="text-center">
+            <h2 class="mb-4">Under the Guidance Of</h2>
+            <p class="fs-5">Dr. PRADEEP KANCHAN</p>
+            <p class="fs-6">Asst Professor Gd-III(CSE)</p>
+            <p class="fs-6">NMAM Institute of Technology</p>
+        </div>
+    
+        <div class="text-center mt-4">
+            <h3 class="mb-3">Team Members</h3>
+            <p class="fs-5">Bhuvanapalli Ameeth Manoj</p>
+            <p class="fs-6">(4NM21CS044)</p>
+            <p class="fs-5">Ashwin lara Lewis</p>
+            <p class="fs-6">(4NM21CS037)</p>
+        </div>
+    </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+  
+  </div>
 
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" tabindex="-1" aria-labelledby="staticBackdropLabel"
@@ -362,15 +472,12 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div style="margin-right: 50px;"></div>
+            <button id="toggleSidebar" class="btn btn-secondary">Team Info</button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item d-flex justify-content-center">
-                        <form class="d-flex" id="searchForm" action="/search/iqoo">
+                        <form class="d-flex" id="searchForm" action="">
                             <div class="input-group">
                                 <input id="searchInput" class="form-control" type="search" placeholder="Search"
                                     aria-label="Search"

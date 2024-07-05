@@ -175,7 +175,7 @@ width: 550px; }
                 }
                 // Update current bid
                 if(response.max_bid!=null){
-                    $('#currentBid').text(response.max_bid);
+                    $('#currentBid').text('₹'+response.max_bid);
                 }
                 if (currentBidCount !== response['Bid_count']){
                     currentBidCount = response['Bid_count'];
@@ -214,7 +214,7 @@ width: 550px; }
 
             // Append the new rows to the tbody
             bidHistory.forEach(function (row) {
-                var newRow = '<tr><td>' + row['user_name'] + '</td><td>' + row['Bid_amt'] + '</td><td>' + row['Bid_time'] + '</td></tr>';
+                var newRow = '<tr><td>' + row['user_name'] + '</td><td>' + '₹'+row['Bid_amt'] + '</td><td>' + row['Bid_time'] + '</td></tr>';
                 bidHistoryTable.append(newRow);
             });
             winbidid = bidHistory[0]['Bid_id']
@@ -301,15 +301,15 @@ width: 550px; }
                             </tr>
                             <tr>
                                 <td class="fw-bold">Base Price</td>
-                                <td>{{details['basePrice']}}</td>
+                                <td>&#8377;{{details['basePrice']}}</td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Reserve Price</td>
-                                <td>{{details['reservePrice']}}</td>
+                                <td>&#8377;{{details['reservePrice']}}</td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Increment</td>
-                                <td>{{details['bidInc']}}</td>
+                                <td>&#8377;{{details['bidInc']}}</td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Seller ID</td>
@@ -333,7 +333,7 @@ width: 550px; }
                             </tr>
                             <tr>
                                 <td class="fw-bold">Maximum Retail Price</td>
-                                <td class="text-danger">{{details['MRP']}}</td>
+                                <td class="text-danger">&#8377;{{details['MRP']}}</td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Category</td>

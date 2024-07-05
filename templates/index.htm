@@ -118,13 +118,11 @@
                 <ul class="list-group mt-5 text-white">
                     <h4 class="text-center mb-4 text-dark">User Functions</h4>
                     <li class="list-group-item d-flex justify-content-between align-content-center">
-                        <a class="text-decoration-none" href="/login">
                             <div class="d-flex flex-row">
                                 <div class="ml-2">
                                     <h6 class="mb-0 heading">Login to get Functions</h6>
                                 </div>
                             </div>
-                        </a>
                     </li>
                 </ul>
                 {% endif %}
@@ -221,7 +219,12 @@
                     // Update specific content in card body based on auction status
                     var cardBody = $(`#${row['Auction_id']}_body`);
                     if (row['StatusDef_text'] == 'Closed') {
-                        cardBody.find('.closed-info').html(`<p><strong>Ended:</strong> &#8377;${row['Bid_amt']}</p>`);
+                        if(row['Bid_amt']== null){
+                            cardBody.find('.closed-info').html(`<p><strong>UNSOLD</strong></p>`);
+                        }
+                        else {
+                            cardBody.find('.closed-info').html(`<p><strong>Ended:</strong> &#8377;${row['Bid_amt']}</p>`);
+                        }
                     } else if (row['StatusDef_text'] == 'Upcoming') {
                         cardBody.find('.upcoming-info').html(`<p><strong>Opens in </strong> ${formatTime(timeStringToSeconds(row['openingTime']))}</p>`);
                     } else {
